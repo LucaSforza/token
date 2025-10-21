@@ -1,7 +1,9 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.6.2;
-import "./nft.sol"
 
-contract NftCollection is ERC721, ERC721Metadata {
+import "./nft.sol";
+
+contract NftCollection is ERC721, ERC721Metadata, ERC165 {
     using Address for address;
     using Strings for uint256;
 
@@ -34,11 +36,10 @@ contract NftCollection is ERC721, ERC721Metadata {
     /**
      * @dev See {ERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return
             interfaceId == type(ERC721).interfaceId ||
-            interfaceId == type(ERC721Metadata).interfaceId ||
-            super.supportsInterface(interfaceId);
+            interfaceId == type(ERC721Metadata).interfaceId;
     }
 
     /**
@@ -94,12 +95,12 @@ contract NftCollection is ERC721, ERC721Metadata {
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, uint256 tokenId) public virtual override {
-        address owner = ERC721.ownerOf(tokenId);
+    function approve(address to, uint256 tokenId) public payable virtual override {
+        address owner = NftCollection.ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
 
         require(
-            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
+            msg.sender == owner || isApprovedForAll(owner, msg.sender),
             "ERC721: approve caller is not owner nor approved for all"
         );
 
@@ -119,10 +120,10 @@ contract NftCollection is ERC721, ERC721Metadata {
      * @dev See {IERC721-setApprovalForAll}.
      */
     function setApprovalForAll(address operator, bool approved) public virtual override {
-        require(operator != _msgSender(), "ERC721: approve to caller");
+        require(operator != msg.sender, "ERC721: approve to caller");
 
-        _operatorApprovals[_msgSender()][operator] = approved;
-        emit ApprovalForAll(_msgSender(), operator, approved);
+        _operatorApprovals[msg.sender][operator] = approved;
+        emit ApprovalForAll(msg.sender, operator, approved);
     }
 
     /**
@@ -139,9 +140,9 @@ contract NftCollection is ERC721, ERC721Metadata {
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
+    ) public payable virtual override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: transfer caller is not owner nor approved");
 
         _transfer(from, to, tokenId);
     }
@@ -153,7 +154,7 @@ contract NftCollection is ERC721, ERC721Metadata {
         address from,
         address to,
         uint256 tokenId
-    ) public virtual override {
+    ) public payable virtual override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -165,8 +166,8 @@ contract NftCollection is ERC721, ERC721Metadata {
         address to,
         uint256 tokenId,
         bytes memory _data
-    ) public virtual override {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+    ) public payable virtual override {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
     }
 
@@ -192,10 +193,10 @@ contract NftCollection is ERC721, ERC721Metadata {
         address from,
         address to,
         uint256 tokenId,
-        bytes memory _data
+        bytes memory _data // ignore: Unused function parameter
     ) internal virtual {
         _transfer(from, to, tokenId);
-        require(_checkOnERC721Received(from, to, tokenId, _data), "ERC721: transfer to non ERC721Receiver implementer");
+        _data;
     }
 
     /**
@@ -219,7 +220,7 @@ contract NftCollection is ERC721, ERC721Metadata {
      */
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
         require(_exists(tokenId), "ERC721: operator query for nonexistent token");
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = NftCollection.ownerOf(tokenId);
         return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
     }
 
@@ -247,10 +248,7 @@ contract NftCollection is ERC721, ERC721Metadata {
         bytes memory _data
     ) internal virtual {
         _mint(to, tokenId);
-        require(
-            _checkOnERC721Received(address(0), to, tokenId, _data),
-            "ERC721: transfer to non ERC721Receiver implementer"
-        );
+        _data;
     }
 
     /**
@@ -288,7 +286,7 @@ contract NftCollection is ERC721, ERC721Metadata {
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = NftCollection.ownerOf(tokenId);
 
         _beforeTokenTransfer(owner, address(0), tokenId);
 
@@ -317,7 +315,7 @@ contract NftCollection is ERC721, ERC721Metadata {
         address to,
         uint256 tokenId
     ) internal virtual {
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
+        require(NftCollection.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
         require(to != address(0), "ERC721: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
@@ -339,40 +337,7 @@ contract NftCollection is ERC721, ERC721Metadata {
      */
     function _approve(address to, uint256 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
-        emit Approval(ERC721.ownerOf(tokenId), to, tokenId);
-    }
-
-    /**
-     * @dev Internal function to invoke {IERC721Receiver-onERC721Received} on a target address.
-     * The call is not executed if the target address is not a contract.
-     *
-     * @param from address representing the previous owner of the given token ID
-     * @param to target address that will receive the tokens
-     * @param tokenId uint256 ID of the token to be transferred
-     * @param _data bytes optional data to send along with the call
-     * @return bool whether the call correctly returned the expected magic value
-     */
-    function _checkOnERC721Received(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory _data
-    ) private returns (bool) {
-        if (to.isContract()) {
-            try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, _data) returns (bytes4 retval) {
-                return retval == IERC721Receiver.onERC721Received.selector;
-            } catch (bytes memory reason) {
-                if (reason.length == 0) {
-                    revert("ERC721: transfer to non ERC721Receiver implementer");
-                } else {
-                    assembly {
-                        revert(add(32, reason), mload(reason))
-                    }
-                }
-            }
-        } else {
-            return true;
-        }
+        emit Approval(NftCollection.ownerOf(tokenId), to, tokenId);
     }
 
     /**
