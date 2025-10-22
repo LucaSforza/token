@@ -42,13 +42,13 @@ contract Auction {
         (newOwner, ) = topBid();
     }
 
-    function endAuction() public returns (bool result) {
+    function endAuction() public payable returns (bool result) {
         // simple end: only creator can end and mark auction as ended
         require(!auctionEnded, "auction already ended");
         require(msg.sender == CREATOR, "you must be the creator if you want to terminate the auction");
         result = true;
         address newOwner = winner();
-        toSold.collection.approve(newOwner, toSold.id);
+        toSold.collection.transferFrom(CREATOR, newOwner, toSold.id);
         result = currency.transferFrom(newOwner, CREATOR, bids[newOwner]);
         require(result, "very wrong");
         emit EndedAuction(newOwner);
@@ -56,7 +56,7 @@ contract Auction {
     }
 
 
-    function placeBid(uint value) public returns (bool result) {
+    function placeBid(uint value) public payable returns (bool result) {
         // pre-conditions: the user have enough token
         require(currency.balanceOf(msg.sender) >= value, "not enough tokens");
         result = currency.approve(address(this), value); // approva una futura transazione da me verso il contratto

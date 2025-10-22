@@ -251,6 +251,10 @@ contract NftCollection is ERC721, ERC721Metadata, ERC165 {
         _data;
     }
 
+    function safeMint(address to, uint256 tokenId) public {
+        _safeMint(to, tokenId);
+    }
+
     /**
      * @dev Mints `tokenId` and transfers it to `to`.
      *
