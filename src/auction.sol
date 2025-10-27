@@ -51,6 +51,17 @@ contract Auction {
         toSold.collection.transferFrom(CREATOR, newOwner, toSold.id);
         result = currency.transferFrom(newOwner, CREATOR, bids[newOwner]);
         require(result, "very wrong");
+
+        // refound
+        for (uint i = 0; i < bidders.length; i++) {
+            address bidder = bidders[i];
+            uint val = bids[bidder];
+            if(bidder != newOwner) {
+                result = currency.transfer(bidder, val);
+                require(result, "something wrong appened when sending back the bids");
+            }
+        }
+
         emit EndedAuction(newOwner);
         auctionEnded = true; // now the contract is unusable for further endings
     }
@@ -58,14 +69,16 @@ contract Auction {
 
     function placeBid(uint value) public payable returns (bool result) {
         // pre-conditions: the user have enough token
-        require(currency.balanceOf(msg.sender) >= value, "not enough tokens");
-        result = currency.approve(address(this), value); // approva una futura transazione da me verso il contratto
+        require(currency.allowance(msg.sender, address(this)) >= value, "not enough tokens allowed to transfer");
+
+        result = currency.transferFrom(msg.sender, address(this), value);
+        //result = currency.approve(address(this), value); // approva una futura transazione da me verso il contratto
         require(result, "something went wrong when approving");
         if(!isBidder[msg.sender]) {
             isBidder[msg.sender] = true;
             bidders.push(msg.sender);
         }
-        bids[msg.sender] = value;
+        bids[msg.sender] = bids[msg.sender] + value;
         emit Bid(msg.sender, value);
     }
 
