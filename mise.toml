@@ -1,2 +1,4 @@
 [tools]
-rust = { version = "1.85.0", prefix = "1" }
+rust = { version = "1.85.0", prefix = "1.8" }
+[tasks.dockerBuild]
+run = "docker build . -t auction_controller:base"
