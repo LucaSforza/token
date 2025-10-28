@@ -1,4 +1,9 @@
 [tools]
-rust = { version = "1.85.0", prefix = "1.8" }
+rust = { version = "1.85.0", prefix = "1.8." }
 [tasks.dockerBuild]
+alias = "db"
 run = "docker build . -t auction_controller:base"
+
+[tasks.dockerRun]
+alias = "dr"
+run = "podman run --rm auction_controller:base"
