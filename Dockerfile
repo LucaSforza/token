@@ -25,7 +25,7 @@ RUN  --mount=type=cache,target=/app/target \
 # ---
 
 # 2. Runner Stage
-FROM debian:trixie
+FROM debian:trixie-slim
 
 
 # Copy the musl-compiled binary from the builder
