@@ -1,0 +1,1 @@
+forge create src/auction.sol:Auction --rpc-url https://ethereum-sepolia-rpc.publicnode.com --private-key $(cat ../wallet/key.txt) --broadcast --constructor-args 0x9DbA38F577aD9354bA322Db25AA1504917507eF5 0xE73F4959ecC162A8bd70124104C4f3dBbC553A17 5

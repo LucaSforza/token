@@ -1,0 +1,13 @@
+[package]
+name = "auction_controller" # the name of the package
+version = "0.1.0"    # the current version, obeying semver
+
+[workspace]
+members = ["out/bindings", "."]
+
+[[bin]]
+name = "auction_main"
+path = "main.rs"
+
+[dependencies]
+auction = { path = "out/bindings" }
