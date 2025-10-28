@@ -14,5 +14,5 @@ docs/
 .env
 
 # Others
-
+target/
 analisi/

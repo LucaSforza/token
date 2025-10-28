@@ -1,6 +1,7 @@
 [package]
 name = "auction_controller" # the name of the package
-version = "0.1.0"    # the current version, obeying semver
+version = "0.1.0"           # the current version, obeying semver
+edition = "2021"
 
 [workspace]
 members = ["out/bindings", "."]
@@ -10,4 +11,12 @@ name = "auction_main"
 path = "main.rs"
 
 [dependencies]
-auction = { path = "out/bindings" }
+alloy = { version = "1.0.41", features = ["providers", "node-bindings"] }
+auction = { version = "0.1.0", path = "out/bindings" }
+clap = { version = "4.5.50", features = ["derive"] }
+eyre = "0.6.12"
+hex = "0.4.3"
+tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread"] }
+
+[dev-dependencies]
+alloy = "1.0.41"
