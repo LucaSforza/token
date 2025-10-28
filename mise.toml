@@ -1,8 +1,10 @@
 [tools]
 rust = { version = "1.85.0" }
+
 [tasks.dockerBuild]
 alias = "db"
 run = 'docker build . -t auction_controller:base "$@"'
+
 [tasks.dockerRun]
 alias = "dr"
 run = 'docker run --rm auction_controller:base  "$@"'
@@ -10,6 +12,7 @@ run = 'docker run --rm auction_controller:base  "$@"'
 [tasks.podmanBuild]
 alias = "pb"
 run = 'podman build . -t auction_controller:base "$@"'
+
 [tasks.podmanRun]
 alias = "pr"
 run = 'podman run --rm auction_controller:base "$@"'
