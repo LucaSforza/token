@@ -1,7 +1,7 @@
 FROM rust:slim-trixie AS builder
 WORKDIR /app
 
-RUN apt-get update && apt-get upgrade  -y && apt-get install build-essential=12.12 -y --no-install-reccomends
+RUN apt-get update && apt-get upgrade  -y && apt-get install build-essential=12.12  -y --no-install-recommends
 
 COPY . .
 RUN cargo build --release 
