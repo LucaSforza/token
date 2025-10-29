@@ -99,6 +99,12 @@ contract Auction {
 
     }
 
-    // TODO: get address of the token
-    // TODO: get address of the NFT and id
+    function getTokenAddress() public view returns (address result) {
+        result = address(this.currency);
+    }
+
+    function getNft() public view returns (address result, uint256 token_id) {
+        result = address(toSold.collection);
+        token_id = toSold.id;
+    }
 }
