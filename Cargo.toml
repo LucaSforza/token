@@ -4,7 +4,7 @@ version = "0.1.0"           # the current version, obeying semver
 edition = "2021"
 
 [workspace]
-members = ["out/bindings", "."]
+members = ["bindings", "."]
 
 [[bin]]
 name = "auction_main"
@@ -12,7 +12,7 @@ path = "main.rs"
 
 [dependencies]
 alloy = { version = "1.0.41", features = ["providers", "node-bindings"] }
-auction = { version = "0.1.0", path = "out/bindings" }
+auction = { version = "0.1.0", path = "bindings" }
 clap = { version = "4.5.50", features = ["derive"] }
 eyre = "0.6.12"
 hex = "0.4.3"
