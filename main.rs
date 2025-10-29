@@ -19,6 +19,9 @@ enum Command {
     Winner,
     Placebid { value: alloy::primitives::U256 },
     Endauction,
+    Token,
+    Nft,
+    Create,
 }
 
 #[derive(Parser, Debug)]
@@ -80,8 +83,6 @@ async fn main() -> Result<()> {
     let auc = AuctionInstance::new(addr, prov);
 
     match args.command {
-        // TODO:  create auction
-        // TODO: approve transactions with ERC20 and ERC721 (maybe)
         Command::Winner => {
             let addr = auc.winner().call().await?;
             println!("Winner: {}", addr);
@@ -104,6 +105,18 @@ async fn main() -> Result<()> {
                 .await?;
             println!("{:?}", recepit);
         }
+        Command::Token => {
+            let result = auc.getTokenAddress().call().await?;
+            println!("Token address: {}", result);
+        }
+        Command::Nft => {
+            let result = auc.getNft().call().await?;
+            println!(
+                "Collection address: {}\nToken id: {}",
+                result.result, result.token_id
+            );
+        }
+        Command::Create => todo!(),
     };
     Ok(())
 }

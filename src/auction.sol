@@ -100,7 +100,7 @@ contract Auction {
     }
 
     function getTokenAddress() public view returns (address result) {
-        result = address(this.currency);
+        result = address(currency);
     }
 
     function getNft() public view returns (address result, uint256 token_id) {
