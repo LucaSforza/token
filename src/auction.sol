@@ -50,9 +50,9 @@ contract Auction {
         require(toSold.collection.getApproved(toSold.id) == address(this), "you must allow the contract for transfering the NFT");
         result = true;
         address newOwner = winner();
-        toSold.collection.transferFrom(CREATOR, newOwner, toSold.id);
+        toSold.collection.transferFrom(CREATOR, newOwner, toSold.id); 
         result = currency.transfer(newOwner, bids[newOwner]);
-        require(result, "very wrong");
+        require(result, "transfer of the token has failed");
 
         // refound
         for (uint i = 0; i < bidders.length; i++) {

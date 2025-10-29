@@ -73,14 +73,21 @@ contract NftCollection is ERC721, ERC721Metadata, ERC165 {
         return _symbol;
     }
 
+    mapping (uint256 => string) uris;
+
+    function setURI(uint256 tokenId, string memory uri) public {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        require(ownerOf(tokenId) == msg.sender, "You are not the owner of the NFT");
+        uris[tokenId] = uri;
+    }
+
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-        string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        return uris[tokenId];
     }
 
     /**
@@ -89,7 +96,7 @@ contract NftCollection is ERC721, ERC721Metadata, ERC165 {
      * by default, can be overriden in child contracts.
      */
     function _baseURI() internal view virtual returns (string memory) {
-        return "";
+        return "https://ipfs/";
     }
 
     /**
