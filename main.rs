@@ -53,33 +53,13 @@ fn get_info(args: &Args) -> Result<(Wallet, Url, Address)> {
     Ok((wallet, u, contract_addr))
 }
 
-type MyProvider = alloy::providers::fillers::FillProvider<
-    alloy::providers::fillers::JoinFill<
-        alloy::providers::fillers::JoinFill<
-            alloy::providers::Identity,
-            alloy::providers::fillers::JoinFill<
-                alloy::providers::fillers::GasFiller,
-                alloy::providers::fillers::JoinFill<
-                    alloy::providers::fillers::BlobGasFiller,
-                    alloy::providers::fillers::JoinFill<
-                        alloy::providers::fillers::NonceFiller,
-                        alloy::providers::fillers::ChainIdFiller,
-                    >,
-                >,
-            >,
-        >,
-        alloy::providers::fillers::WalletFiller<Wallet>,
-    >,
-    alloy::providers::RootProvider,
->;
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
 
     let (w, u, addr) = get_info(&args)?;
 
-    let prov: MyProvider = ProviderBuilder::new().wallet(w).connect_http(u);
+    let prov = ProviderBuilder::new().wallet(w).connect_http(u);
     let auc = AuctionInstance::new(addr, prov);
 
     match args.command {
