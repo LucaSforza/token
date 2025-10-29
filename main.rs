@@ -24,6 +24,7 @@ enum Command {
     Create,
 }
 
+// TODO: aggiungere descrizioni
 #[derive(Parser, Debug)]
 #[command(version,about,long_about = None)]
 struct Args {
@@ -35,7 +36,7 @@ struct Args {
     private_key: String,
     #[arg(short, long)]
     eth_address: String,
-    #[arg(short, long)]
+    #[arg(short, long)] // TODO: mettere rcp di test di defautl
     rpc_address: String,
 }
 
@@ -62,9 +63,14 @@ async fn main() -> Result<()> {
     let prov = ProviderBuilder::new().wallet(w).connect_http(u);
     let auc = AuctionInstance::new(addr, prov);
 
+    // TODO (lunghino da implementare): aggiungere la possibilità
+    // di approvare la transazione di token verso il contratto e anche NFT
+    // aggiungere quindi due comandi:
+    // approveToken e approveNFT che approvano transazioni che hanno come 'spender' l'auction.
     match args.command {
         Command::Winner => {
             let addr = auc.winner().call().await?;
+            // TODO: aggiungere il bid massimo
             println!("Winner: {}", addr);
         }
         Command::Placebid { value } => {
@@ -96,7 +102,7 @@ async fn main() -> Result<()> {
                 result.result, result.token_id
             );
         }
-        Command::Create => todo!(),
+        Command::Create => todo!(), // TODO: implementare
     };
     Ok(())
 }
