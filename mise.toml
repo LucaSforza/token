@@ -1,5 +1,5 @@
 [tools]
-rust = { version = "1.85.0" }
+rust = { version = "1.86.0" }
 
 [tasks.dockerBuild]
 alias = "db"

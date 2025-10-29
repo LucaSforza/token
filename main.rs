@@ -1,7 +1,7 @@
 extern crate alloy;
 extern crate auction;
 extern crate eyre;
-use std::{process::exit, str::FromStr};
+use std::{str::FromStr, time::Duration};
 
 use alloy::{
     network::EthereumWallet as Wallet,
@@ -50,13 +50,33 @@ fn get_info(args: &Args) -> Result<(Wallet, Url, Address)> {
     Ok((wallet, u, contract_addr))
 }
 
+type MyProvider = alloy::providers::fillers::FillProvider<
+    alloy::providers::fillers::JoinFill<
+        alloy::providers::fillers::JoinFill<
+            alloy::providers::Identity,
+            alloy::providers::fillers::JoinFill<
+                alloy::providers::fillers::GasFiller,
+                alloy::providers::fillers::JoinFill<
+                    alloy::providers::fillers::BlobGasFiller,
+                    alloy::providers::fillers::JoinFill<
+                        alloy::providers::fillers::NonceFiller,
+                        alloy::providers::fillers::ChainIdFiller,
+                    >,
+                >,
+            >,
+        >,
+        alloy::providers::fillers::WalletFiller<Wallet>,
+    >,
+    alloy::providers::RootProvider,
+>;
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
 
     let (w, u, addr) = get_info(&args)?;
 
-    let prov = ProviderBuilder::new().wallet(w).connect_http(u);
+    let prov: MyProvider = ProviderBuilder::new().wallet(w).connect_http(u);
     let auc = AuctionInstance::new(addr, prov);
 
     match args.command {
@@ -65,20 +85,22 @@ async fn main() -> Result<()> {
             println!("Winner: {}", addr);
         }
         Command::Placebid { value } => {
-            let result = auc.placeBid(value).call().await?;
-            if !result {
-                eprintln!("Placing the bid failed");
-                exit(1);
-            }
-            println!("The bid was posted");
+            let result = auc.placeBid(value).send().await?;
+            let recepit = result
+                .with_required_confirmations(1)
+                .with_timeout(Some(Duration::from_secs(60)))
+                .get_receipt()
+                .await?;
+            println!("{:?}", recepit);
         }
         Command::Endauction => {
-            let result = auc.endAuction().call().await?;
-            if !result {
-                eprintln!("The auction could not be ended");
-                exit(1);
-            }
-            println!("The auction is Finished");
+            let result = auc.endAuction().send().await?;
+            let recepit = result
+                .with_required_confirmations(1)
+                .with_timeout(Some(Duration::from_secs(60)))
+                .get_receipt()
+                .await?;
+            println!("{:?}", recepit);
         }
     };
     Ok(())
