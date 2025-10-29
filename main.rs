@@ -80,6 +80,8 @@ async fn main() -> Result<()> {
     let auc = AuctionInstance::new(addr, prov);
 
     match args.command {
+        // TODO:  create auction
+        // TODO: approve transactions with ERC20 and ERC721 (maybe)
         Command::Winner => {
             let addr = auc.winner().call().await?;
             println!("Winner: {}", addr);

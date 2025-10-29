@@ -31,7 +31,8 @@ contract Auction {
         currency = ERC20(token);
         toSold = Nft(tokenId, ERC721(nft));
         auctionEnded = false;
-        require(toSold.collection.ownerOf(tokenId) == msg.sender, "you must be the owner of the NFT");
+        // controlla se chi vende ha fatto l'approve su quell'NFT verso questo contract
+        require(toSold.collection.ownerOf(tokenId) == msg.sender, "you must be the owner of the NFT and allowed the token to the address");
     }
 
     // track bidders with a set for O(1) membership + array for iteration
@@ -46,10 +47,11 @@ contract Auction {
         // simple end: only creator can end and mark auction as ended
         require(!auctionEnded, "auction already ended");
         require(msg.sender == CREATOR, "you must be the creator if you want to terminate the auction");
+        require(toSold.collection.getApproved(toSold.id) == address(this), "you must allow the contract for transfering the NFT");
         result = true;
         address newOwner = winner();
         toSold.collection.transferFrom(CREATOR, newOwner, toSold.id);
-        result = currency.transferFrom(newOwner, CREATOR, bids[newOwner]);
+        result = currency.transfer(newOwner, bids[newOwner]);
         require(result, "very wrong");
 
         // refound
@@ -96,4 +98,7 @@ contract Auction {
         }
 
     }
+
+    // TODO: get address of the token
+    // TODO: get address of the NFT and id
 }
