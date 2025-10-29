@@ -141,7 +141,7 @@ contract NftCollection is ERC721, ERC721Metadata, ERC165 {
     }
 
     /**
-     * @dev See {IERC721-transferFrom}.
+     * @dev See {IERC721-MFrom}.
      */
     function transferFrom(
         address from,
