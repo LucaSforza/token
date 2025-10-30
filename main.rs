@@ -29,83 +29,143 @@ impl fmt::Display for DisplayableTransactionReceipt {
 }
 #[derive(Subcommand, Clone, Debug, PartialEq, Eq)]
 enum Command {
+    /// Displays the address of the auction winner.
     Winner {
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
     },
+
+    /// Places a bid in an active auction.
     Placebid {
+        /// Private key of the bidder.
         #[arg(short, long)]
         private_key: String,
+
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
+
+        /// Bid amount in tokens.
         #[arg(short, long)]
         value: u64,
     },
+
+    /// Ends an active auction (callable only by the auction creator).
     Endauction {
+        /// Private key of the auction owner.
         #[arg(short, long)]
         private_key: String,
+
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
     },
+
+    /// Displays the ERC20 token used in the auction.
     Token {
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
     },
+
+    /// Displays the NFT collection associated with the auction.
     Nft {
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
     },
+
+    /// Shows the current best bid of the auction.
     Bestbid {
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
     },
+
+    /// Creates a new NFT auction contract.
     Create {
+        /// Private key of the creator.
         #[arg(short, long)]
         private_key: String,
+
+        /// Address of the ERC20 token used for bidding.
         #[arg(short, long)]
         token: String,
+
+        /// Address of the NFT collection.
         #[arg(short, long)]
         nft_collection: String,
+
+        /// Token ID of the NFT to auction.
         #[arg(short, long)]
-        id_token: u64, // TODO: in realta U256...
-                       // ma non ci preoccupiamo perché tanto abbiamo 1.000.000 token su SapiCoin
-                       // e u64 è sufficiente per i nostri scopi
+        id_token: u64,
     },
+
+    /// Grants approval for the auction contract to spend ERC20 tokens.
     AllowTokenTransaction {
+        /// Private key of the token owner.
         #[arg(short, long)]
         private_key: String,
+
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
+
+        /// Address of the ERC20 token contract.
         #[arg(short, long)]
         token: String,
+
+        /// Maximum allowance value in tokens.
         #[arg(short, long)]
         value: u64,
     },
+
+    /// Grants approval for the auction contract to transfer an NFT.
     AllowNftTrasaction {
+        /// Private key of the NFT owner.
         #[arg(short, long)]
         private_key: String,
+
+        /// Address of the auction smart contract.
         #[arg(short, long)]
         auction: String,
+
+        /// Address of the NFT collection.
         #[arg(short, long)]
         collection: String,
+
+        /// Token ID of the NFT to authorize for transfer.
         #[arg(short, long)]
-        id: u64, // TODO: qua u64 potrebbe essere un problema se volessimo fare un minting di un NFT molto alto.
+        id: u64,
     },
 }
 
-// TODO: aggiungere descrizioni
+/// Main CLI configuration.
 #[derive(Parser, Debug)]
-#[command(version,about,long_about = None)]
+#[command(
+    name = "auction_controller",
+    author = "Luca Sforza <sforza.2050030@studenti.uniroma1.it>, Roberto Di Rosa",
+    version,
+    about = "auction_controller is a command-line tool to create and manage NFT auctions on the Ethereum blockchain. \
+It allows users to deploy new auctions, place bids, view winners, and handle ERC20/NFT approvals or transfers directly on-chain. \
+All operations are transparent and verifiable through Ethereum RPC providers.\n\n\
+Developed by Luca Sforza and Roberto Di Rosa. Licensed under GPL v3.0.",
+    long_about = None
+)]
 struct Args {
     #[command(subcommand)]
     command: Command,
-    // TODO: spostare l'address dentro
+
+    /// Ethereum address of the user interacting with the contracts.
     #[arg(short, long)]
     eth_address: String,
+
+    /// RPC endpoint used to interact with the Ethereum network.
     #[arg(
         short,
         long,
-        default_value_t = String::from("https://ethereum-sepolia-rpc.publicnode.com"),
+        default_value_t = String::from("https://ethereum-sepolia-rpc.publicnode.com")
     )]
     rpc_address: String,
 }
