@@ -35,10 +35,15 @@ enum Command {
     },
     Placebid {
         #[arg(short, long)]
+        private_key: String,
+        #[arg(short, long)]
         auction: String,
-        value: alloy::primitives::U256,
+        #[arg(short, long)]
+        value: u64,
     },
     Endauction {
+        #[arg(short, long)]
+        private_key: String,
         #[arg(short, long)]
         auction: String,
     },
@@ -56,6 +61,8 @@ enum Command {
     },
     Create {
         #[arg(short, long)]
+        private_key: String,
+        #[arg(short, long)]
         token: String,
         #[arg(short, long)]
         nft_collection: String,
@@ -66,6 +73,8 @@ enum Command {
     },
     AllowTokenTransaction {
         #[arg(short, long)]
+        private_key: String,
+        #[arg(short, long)]
         auction: String,
         #[arg(short, long)]
         token: String,
@@ -73,6 +82,8 @@ enum Command {
         value: u64,
     },
     AllowNftTrasaction {
+        #[arg(short, long)]
+        private_key: String,
         #[arg(short, long)]
         auction: String,
         #[arg(short, long)]
@@ -88,8 +99,7 @@ enum Command {
 struct Args {
     #[command(subcommand)]
     command: Command,
-    #[arg(short, long)]
-    private_key: String,
+    // TODO: spostare l'address dentro
     #[arg(short, long)]
     eth_address: String,
     #[arg(
@@ -100,17 +110,14 @@ struct Args {
     rpc_address: String,
 }
 
-fn get_info(args: &Args) -> Result<(Wallet, Url)> {
-    let my_address: Address = args.eth_address.as_str().parse()?;
-    let u: Url = Url::from_str(args.rpc_address.as_str())?;
-    let pk = hex::decode(args.private_key.clone())?;
+fn create_wallet(private_key: String, eth_address: String) -> Result<Wallet> {
+    let my_address: Address = eth_address.as_str().parse()?;
+    let pk = hex::decode(private_key.clone())?;
 
     let sign_key = SigningKey::from_slice(pk.as_slice())?;
 
     let signer = PrivateKeySigner::new_with_credential(sign_key, my_address, None);
-    let wallet = Wallet::new(signer);
-
-    Ok((wallet, u))
+    Ok(Wallet::new(signer))
 }
 
 fn get_address(x: String) -> Result<Address> {
@@ -121,27 +128,37 @@ fn get_address(x: String) -> Result<Address> {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
-    let (w, u) = get_info(&args)?;
-
-    let prov = ProviderBuilder::new().wallet(w).connect_http(u);
+    let u: Url = Url::from_str(args.rpc_address.as_str())?;
 
     match args.command {
         Command::Winner { auction } => {
+            let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.winner().call().await?;
             println!("Winner: {}", result);
         }
-        Command::Placebid { auction, value } => {
+        Command::Placebid {
+            auction,
+            value,
+            private_key,
+        } => {
+            let w = create_wallet(private_key, args.eth_address)?;
+            let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
-            let result = auc.placeBid(value).send().await?;
+            let result = auc.placeBid(U256::from(value)).send().await?;
             let recepit = result
                 .with_required_confirmations(1)
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{}", DisplayableTransactionReceipt(recepit)); // TODO: implt fmt::Display for TransactionReceipt
+            println!("{}", DisplayableTransactionReceipt(recepit));
         }
-        Command::Endauction { auction } => {
+        Command::Endauction {
+            auction,
+            private_key,
+        } => {
+            let w = create_wallet(private_key, args.eth_address)?;
+            let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.endAuction().send().await?;
             let recepit = result
@@ -152,17 +169,20 @@ async fn main() -> Result<()> {
             println!("{:?}", recepit); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Token { auction } => {
+            let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.currency().call().await?;
             println!("Winner: {}", result); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Nft { auction } => {
+            let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.getNft().call().await?; // TODO: cambia getNft() con toSold() getNft è DEPRECATA
             println!("NFT Collection: {}", result.result); // TODO: implt fmt::Display for TransactionReceipt
             println!("Token Id: {}", result.token_id); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Bestbid { auction } => {
+            let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.topBid().call().await?;
             println!("Best Bidder: {}", result.user); // TODO: implt fmt::Display for TransactionReceipt
@@ -172,7 +192,10 @@ async fn main() -> Result<()> {
             token,
             nft_collection,
             id_token,
+            private_key,
         } => {
+            let w = create_wallet(private_key, args.eth_address)?;
+            let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let id_token: U256 = U256::from(id_token);
             let builder = AuctionInstance::deploy_builder(
                 prov,
@@ -192,7 +215,10 @@ async fn main() -> Result<()> {
             token,
             value,
             auction,
+            private_key,
         } => {
+            let w = create_wallet(private_key, args.eth_address)?;
+            let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let contract = ERC20Instance::new(get_address(token)?, prov);
             let result = contract
                 .approve(get_address(auction)?, U256::from(value))
@@ -209,7 +235,10 @@ async fn main() -> Result<()> {
             collection,
             id,
             auction,
+            private_key,
         } => {
+            let w = create_wallet(private_key, args.eth_address)?;
+            let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let contract = ERC721Instance::new(get_address(collection)?, prov);
             let result = contract
                 .approve(get_address(auction)?, U256::from(id))
