@@ -33,7 +33,7 @@ _Cli_ tool for our blockchain course
 ### Brew
 
 ```bash
- brew Install TODO
+ brew tap LucaSforza/auction-controller &&  brew install lucasforza/auction-controller/auction_controller
 ```
 
 ### Manual
