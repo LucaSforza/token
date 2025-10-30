@@ -166,27 +166,27 @@ async fn main() -> Result<()> {
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{:?}", recepit); // TODO: implt fmt::Display for TransactionReceipt
+            println!("{:?}", recepit);
         }
         Command::Token { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.currency().call().await?;
-            println!("Winner: {}", result); // TODO: implt fmt::Display for TransactionReceipt
+            println!("Winner: {}", result);
         }
         Command::Nft { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.getNft().call().await?; // TODO: cambia getNft() con toSold() getNft è DEPRECATA
-            println!("NFT Collection: {}", result.result); // TODO: implt fmt::Display for TransactionReceipt
-            println!("Token Id: {}", result.token_id); // TODO: implt fmt::Display for TransactionReceipt
+            println!("NFT Collection: {}", result.result);
+            println!("Token Id: {}", result.token_id);
         }
         Command::Bestbid { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.topBid().call().await?;
-            println!("Best Bidder: {}", result.user); // TODO: implt fmt::Display for TransactionReceipt
-            println!("Tokens placed: {}", result.value); // TODO: implt fmt::Display for TransactionReceipt
+            println!("Best Bidder: {}", result.user);
+            println!("Tokens placed: {}", result.value);
         }
         Command::Create {
             token,
