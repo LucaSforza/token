@@ -15,7 +15,7 @@ contract Auction {
 
     address immutable public CREATOR;
     bool public auctionEnded;
-    Nft toSold;
+    Nft public toSold;
 
     mapping (address => uint) bids;
 
@@ -97,14 +97,5 @@ contract Auction {
             }
         }
 
-    }
-
-    function getTokenAddress() public view returns (address result) {
-        result = address(currency);
-    }
-
-    function getNft() public view returns (address result, uint256 token_id) {
-        result = address(toSold.collection);
-        token_id = toSold.id;
     }
 }
