@@ -1,7 +1,7 @@
 extern crate alloy;
 extern crate auction;
 extern crate eyre;
-use std::{process::exit, str::FromStr, time::Duration};
+use std::{str::FromStr, time::Duration};
 
 use alloy::{
     network::EthereumWallet as Wallet,
@@ -10,7 +10,9 @@ use alloy::{
     signers::{k256::ecdsa::SigningKey, local::PrivateKeySigner},
     transports::http::reqwest::Url,
 };
-use auction::auction::Auction::AuctionInstance;
+use auction::{
+    auction::Auction::AuctionInstance, erc20::ERC20::ERC20Instance, erc721::ERC721::ERC721Instance,
+};
 use clap::{Parser, Subcommand};
 use eyre::Result;
 
@@ -51,6 +53,22 @@ enum Command {
                        // ma non ci preoccupiamo perché tanto abbiamo 1.000.000 token su SapiCoin
                        // e u64 è sufficiente per i nostri scopi
     },
+    AllowTokenTransaction {
+        #[arg(short, long)]
+        auction: String,
+        #[arg(short, long)]
+        token: String,
+        #[arg(short, long)]
+        value: u64,
+    },
+    AllowNftTrasaction {
+        #[arg(short, long)]
+        auction: String,
+        #[arg(short, long)]
+        collection: String,
+        #[arg(short, long)]
+        id: u64, // TODO: qua u64 potrebbe essere un problema se volessimo fare un minting di un NFT molto alto.
+    },
 }
 
 // TODO: aggiungere descrizioni
@@ -85,7 +103,7 @@ fn get_info(args: &Args) -> Result<(Wallet, Url)> {
     Ok((wallet, u))
 }
 
-fn get_addres(x: String) -> Result<Address> {
+fn get_address(x: String) -> Result<Address> {
     return Ok(x.as_str().parse()?);
 }
 
@@ -96,19 +114,18 @@ async fn main() -> Result<()> {
     let (w, u) = get_info(&args)?;
 
     let prov = ProviderBuilder::new().wallet(w).connect_http(u);
-    let auc;
     // TODO (lunghino da implementare): aggiungere la possibilità
     // di approvare la transazione di token verso il contratto e anche NFT
     // aggiungere quindi due comandi:
     // approveToken e approveNFT che approvano transazioni che hanno come 'spender' l'auction.
     match args.command {
         Command::Winner { auction } => {
-            let auc = AuctionInstance::new(get_addres(auction)?, prov);
+            let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.winner().call().await?;
             println!("Winner: {}", result); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Placebid { auction, value } => {
-            let auc = AuctionInstance::new(get_addres(auction)?, prov);
+            let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.placeBid(value).send().await?;
             let recepit = result
                 .with_required_confirmations(1)
@@ -118,7 +135,7 @@ async fn main() -> Result<()> {
             println!("{:?}", recepit); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Endauction { auction } => {
-            let auc = AuctionInstance::new(get_addres(auction)?, prov);
+            let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.endAuction().send().await?;
             let recepit = result
                 .with_required_confirmations(1)
@@ -128,18 +145,18 @@ async fn main() -> Result<()> {
             println!("{:?}", recepit); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Token { auction } => {
-            let auc = AuctionInstance::new(get_addres(auction)?, prov);
+            let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.currency().call().await?;
             println!("Winner: {}", result); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Nft { auction } => {
-            let auc = AuctionInstance::new(get_addres(auction)?, prov);
+            let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.getNft().call().await?; // TODO: cambia getNft() con toSold() getNft è DEPRECATA
             println!("NFT Collection: {}", result.result); // TODO: implt fmt::Display for TransactionReceipt
             println!("Token Id: {}", result.token_id); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Bestbid { auction } => {
-            let auc = AuctionInstance::new(get_addres(auction)?, prov);
+            let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.topBid().call().await?;
             println!("Best Bidder: {}", result.user); // TODO: implt fmt::Display for TransactionReceipt
             println!("Tokens placed: {}", result.value); // TODO: implt fmt::Display for TransactionReceipt
@@ -152,13 +169,47 @@ async fn main() -> Result<()> {
             let id_token: U256 = U256::from(id_token);
             let builder = AuctionInstance::deploy_builder(
                 prov,
-                get_addres(token)?,
-                get_addres(nft_collection)?,
+                get_address(token)?,
+                get_address(nft_collection)?,
                 id_token,
             );
             let result = builder.send().await?;
             let recepit = result
                 .with_required_confirmations(1)
+                .with_timeout(Some(Duration::from_secs(60)))
+                .get_receipt()
+                .await?;
+            println!("{:?}", recepit);
+        }
+        Command::AllowTokenTransaction {
+            token,
+            value,
+            auction,
+        } => {
+            let contract = ERC20Instance::new(get_address(token)?, prov);
+            let result = contract
+                .approve(get_address(auction)?, U256::from(value))
+                .send()
+                .await?;
+            let recepit = result
+                //.with_required_confirmations(1)
+                .with_timeout(Some(Duration::from_secs(60)))
+                .get_receipt()
+                .await?;
+            println!("{:?}", recepit);
+        }
+        Command::AllowNftTrasaction {
+            collection,
+            id,
+            auction,
+        } => {
+            let contract = ERC721Instance::new(get_address(collection)?, prov);
+            let result = contract
+                .approve(get_address(auction)?, U256::from(id))
+                .send()
+                .await?;
+            let recepit = result
+                //.with_required_confirmations(1)
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
