@@ -1,12 +1,14 @@
 extern crate alloy;
 extern crate auction;
 extern crate eyre;
+use core::fmt;
 use std::{str::FromStr, time::Duration};
 
 use alloy::{
     network::EthereumWallet as Wallet,
     primitives::{Address, U256},
     providers::ProviderBuilder,
+    rpc::types::TransactionReceipt,
     signers::{k256::ecdsa::SigningKey, local::PrivateKeySigner},
     transports::http::reqwest::Url,
 };
@@ -15,7 +17,16 @@ use auction::{
 };
 use clap::{Parser, Subcommand};
 use eyre::Result;
-
+struct DisplayableTransactionReceipt(TransactionReceipt);
+impl fmt::Display for DisplayableTransactionReceipt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let gas_total_price = self.0.gas_used * self.0.effective_gas_price as u64;
+        writeln!(f, "TxID:{:?},", self.0.transaction_index)?;
+        writeln!(f, "Fee:{}", gas_total_price)?;
+        writeln!(f, "Gas_used:{}", self.0.gas_used)?;
+        writeln!(f, "Gas_price:{}", self.0.effective_gas_price)
+    }
+}
 #[derive(Subcommand, Clone, Debug, PartialEq, Eq)]
 enum Command {
     Winner {
@@ -84,7 +95,6 @@ struct Args {
     #[arg(
         short,
         long,
-        // TODO: Sistemare questa schifezza
         default_value_t = String::from("https://ethereum-sepolia-rpc.publicnode.com"),
     )]
     rpc_address: String,
@@ -114,15 +124,12 @@ async fn main() -> Result<()> {
     let (w, u) = get_info(&args)?;
 
     let prov = ProviderBuilder::new().wallet(w).connect_http(u);
-    // TODO (lunghino da implementare): aggiungere la possibilità
-    // di approvare la transazione di token verso il contratto e anche NFT
-    // aggiungere quindi due comandi:
-    // approveToken e approveNFT che approvano transazioni che hanno come 'spender' l'auction.
+
     match args.command {
         Command::Winner { auction } => {
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.winner().call().await?;
-            println!("Winner: {}", result); // TODO: implt fmt::Display for TransactionReceipt
+            println!("Winner: {}", result);
         }
         Command::Placebid { auction, value } => {
             let auc = AuctionInstance::new(get_address(auction)?, prov);
@@ -132,7 +139,7 @@ async fn main() -> Result<()> {
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{:?}", recepit); // TODO: implt fmt::Display for TransactionReceipt
+            println!("{}", DisplayableTransactionReceipt(recepit)); // TODO: implt fmt::Display for TransactionReceipt
         }
         Command::Endauction { auction } => {
             let auc = AuctionInstance::new(get_address(auction)?, prov);
