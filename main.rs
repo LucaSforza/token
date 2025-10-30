@@ -85,7 +85,7 @@ struct Args {
         short,
         long,
         // TODO: Sistemare questa schifezza
-        default_value_t = ["https://ethereum-sepolia-rpc.publicnode.com".to_string()][0].clone(),
+        default_value_t = String::from("https://ethereum-sepolia-rpc.publicnode.com"),
     )]
     rpc_address: String,
 }
