@@ -38,6 +38,9 @@ enum Command {
 
     /// Places a bid in an active auction.
     Placebid {
+        /// Ethereum address of the bidder.
+        #[arg(short, long)]
+        eth_address: String,
         /// Private key of the bidder.
         #[arg(short, long)]
         private_key: String,
@@ -53,6 +56,9 @@ enum Command {
 
     /// Ends an active auction (callable only by the auction creator).
     Endauction {
+        /// Ethereum address of the auction owner.
+        #[arg(short, long)]
+        eth_address: String,
         /// Private key of the auction owner.
         #[arg(short, long)]
         private_key: String,
@@ -85,6 +91,9 @@ enum Command {
 
     /// Creates a new NFT auction contract.
     Create {
+        /// Ethereum address of the creator.
+        #[arg(short, long)]
+        eth_address: String,
         /// Private key of the creator.
         #[arg(short, long)]
         private_key: String,
@@ -104,6 +113,9 @@ enum Command {
 
     /// Grants approval for the auction contract to spend ERC20 tokens.
     AllowTokenTransaction {
+        /// Ethereum address of the token owner.
+        #[arg(short, long)]
+        eth_address: String,
         /// Private key of the token owner.
         #[arg(short, long)]
         private_key: String,
@@ -123,6 +135,9 @@ enum Command {
 
     /// Grants approval for the auction contract to transfer an NFT.
     AllowNftTrasaction {
+        /// Ethereum address of the NFT owner.
+        #[arg(short, long)]
+        eth_address: String,
         /// Private key of the NFT owner.
         #[arg(short, long)]
         private_key: String,
@@ -156,10 +171,6 @@ Developed by Luca Sforza and Roberto Di Rosa. Licensed under GPL v3.0.",
 struct Args {
     #[command(subcommand)]
     command: Command,
-
-    /// Ethereum address of the user interacting with the contracts.
-    #[arg(short, long)]
-    eth_address: String,
 
     /// RPC endpoint used to interact with the Ethereum network.
     #[arg(
@@ -201,8 +212,9 @@ async fn main() -> Result<()> {
             auction,
             value,
             private_key,
+            eth_address,
         } => {
-            let w = create_wallet(private_key, args.eth_address)?;
+            let w = create_wallet(private_key, eth_address)?;
             let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.placeBid(U256::from(value)).send().await?;
@@ -216,8 +228,9 @@ async fn main() -> Result<()> {
         Command::Endauction {
             auction,
             private_key,
+            eth_address,
         } => {
-            let w = create_wallet(private_key, args.eth_address)?;
+            let w = create_wallet(private_key, eth_address)?;
             let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.endAuction().send().await?;
@@ -253,8 +266,9 @@ async fn main() -> Result<()> {
             nft_collection,
             id_token,
             private_key,
+            eth_address,
         } => {
-            let w = create_wallet(private_key, args.eth_address)?;
+            let w = create_wallet(private_key, eth_address)?;
             let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let id_token: U256 = U256::from(id_token);
             let builder = AuctionInstance::deploy_builder(
@@ -276,8 +290,9 @@ async fn main() -> Result<()> {
             value,
             auction,
             private_key,
+            eth_address,
         } => {
-            let w = create_wallet(private_key, args.eth_address)?;
+            let w = create_wallet(private_key, eth_address)?;
             let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let contract = ERC20Instance::new(get_address(token)?, prov);
             let result = contract
@@ -296,8 +311,9 @@ async fn main() -> Result<()> {
             id,
             auction,
             private_key,
+            eth_address,
         } => {
-            let w = create_wallet(private_key, args.eth_address)?;
+            let w = create_wallet(private_key, eth_address)?;
             let prov = ProviderBuilder::new().wallet(w).connect_http(u);
             let contract = ERC721Instance::new(get_address(collection)?, prov);
             let result = contract
