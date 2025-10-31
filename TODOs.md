@@ -1,0 +1,2 @@
+- Publish the new NFTCollection
+- Test the Auction

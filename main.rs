@@ -237,9 +237,9 @@ async fn main() -> Result<()> {
         Command::Nft { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
-            let result = auc.getNft().call().await?; // TODO: cambia getNft() con toSold() getNft è DEPRECATA
-            println!("NFT Collection: {}", result.result);
-            println!("Token Id: {}", result.token_id);
+            let result = auc.toSold().call().await?;
+            println!("NFT Collection: {}", result.collection);
+            println!("Token Id: {}", result.id);
         }
         Command::Bestbid { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);

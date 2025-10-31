@@ -7,7 +7,7 @@ edition = "2021"
 members = ["bindings", "."]
 
 [[bin]]
-name = "auction_main"
+name = "auction_controller"
 path = "main.rs"
 
 [dependencies]
