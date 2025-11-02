@@ -54,22 +54,113 @@ cargo build --release
 ### Docker
 
 ```bash
- docker run --rm auction_controller:base  -a 0xeDCB9D33923EFd291534b74112fD99299BC7aEC4 -p 2050d2bde2a46a47d5cab597029c04c6ac0710a4f0976724f976e02506c51d39 -e 0x9f5A46DAB47760F8938a936eBc585e5Be1Ed68bD -r https://ethereum-sepolia-rpc.publicnode.com winner
+ docker run --rm auction_controller:base -h
 ```
 
 ### Anything else
 
 ```bash
-auction_controller -a 0xeDCB9D33923EFd291534b74112fD99299BC7aEC4 -p 2050d2bde2a46a47d5cab597029c04c6ac0710a4f0976724f976e02506c51d39 -e 0x9f5A46DAB47760F8938a936eBc585e5Be1Ed68bD -r https://ethereum-sepolia-rpc.publicnode.com winner
+auction_controller -h
 ```
 
 ```bash
  # this should be the result when you run the command
- Winner: 0x03237997256f8088aC568b4A66F307A7A001D3a6
+auction_controller is a command-line tool to create and manage NFT auctions on the Ethereum blockchain.
+ It allows users to deploy new auctions, place bids, view winners, and handle ERC20/NFT approvals or tr
+ansfers directly on-chain. All operations are transparent and verifiable through Ethereum RPC providers
+.
+
+Developed by Luca Sforza and Roberto Di Rosa. Licensed under GPL v3.0.
+
+Usage: auction_controller [OPTIONS] <COMMAND>
+
+Commands:
+  winner                   Displays the address of the auction winner
+  placebid                 Places a bid in an active auction
+  endauction               Ends an active auction (callable only by the auction creator)
+  token                    Displays the ERC20 token used in the auction
+  nft                      Displays the NFT collection associated with the auction
+  bestbid                  Shows the current best bid of the auction
+  create                   Creates a new NFT auction contract
+  allow-token-transaction  Grants approval for the auction contract to spend ERC20 tokens
+  allow-nft-trasaction     Grants approval for the auction contract to transfer an NFT
+  help                     Print this message or the help of the given subcommand(s)
+
+Options:
+  -r, --rpc-address <RPC_ADDRESS>  RPC endpoint used to interact with the Ethereum network [default: ht
+tps://ethereum-sepolia-rpc.publicnode.com]
+  -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
-## Documentation
+## How reproduce the results
 
 we use :
 
 - <https://book.getfoundry.sh/>
+
+Install foundry and then run:
+
+```bash
+./deployToken.sh
+```
+
+for deplying the token.
+
+We didn't insert this in auction_controller beacuse this tool is only for controlling auctions.
+
+```bash
+./deployNFT.sh
+```
+
+for deploying the NFT collection
+
+```bash
+./mintNFT.sh
+```
+
+for minting a NFT of a collection.
+
+```bash
+./setURI.sh
+```
+
+for setting an URI for a NFT.
+
+### Auctions
+
+Firts of all create an auction:
+
+```bash
+auction_controller create -e $(cat address.txt) -t 0x9DbA38F577aD9354bA322Db25AA1504917507eF5 -n 
+$(cat nft_collection_address) -i $(cat token_id) -p $(cat secret.key)
+```
+
+Place a bid:
+
+Before placing a bid you have to approve the trasaction to the Auction.
+
+The Auction will transfer your tokens to itself. If you will not win the Auction you will be refound by the Auction.
+
+```bash
+cargo run -- allow-token-transaction  -e $(cat address.txt) -t $(cat token_address.txt) -v 100 -p $(cat secret.key) -a $(cat auction_address.txt)
+```
+
+Then you can place a bid:
+
+```bash
+auction_controller placebid  -e $(cat address.txt) -p $(cat secret.key) -a $(cat auction_address.txt) -v 100
+```
+
+Ending an auction is quite simple. If you are the owner then you can end the auction when you prefer.
+
+But before you need to allow the NFT transaction.
+
+```bash
+auction_controller allow-nft-trasaction  -e $(cat address.txt) -n $(cat nft_collection.txt) -i $(cat token_id.txt) -p $(cat secret.key) -a $(cat auction_address.txt)
+```
+
+Then you can end the auction:
+```bash
+auction_controller endauction -e $(cat address.txt) -p $(cat secret.key) -a $(cat auction_address.txt)
+```

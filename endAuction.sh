@@ -1,1 +1,0 @@
-cast send 0xeDCB9D33923EFd291534b74112fD99299BC7aEC4 "endAuction()(bool)" --rpc-url https://ethereum-sepolia-rpc.publicnode.com --private-key $(cat rob.key)
