@@ -21,10 +21,17 @@ struct DisplayableTransactionReceipt(TransactionReceipt);
 impl fmt::Display for DisplayableTransactionReceipt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let gas_total_price = self.0.gas_used * self.0.effective_gas_price as u64;
-        writeln!(f, "TxID:{:?},", self.0.transaction_index)?;
+        writeln!(f, "TxID:{:?},", self.0.transaction_hash)?;
         writeln!(f, "Fee:{}", gas_total_price)?;
         writeln!(f, "Gas_used:{}", self.0.gas_used)?;
-        writeln!(f, "Gas_price:{}", self.0.effective_gas_price)
+        writeln!(f, "Gas_price:{}", self.0.effective_gas_price)?;
+        if let Some(contract) = self.0.contract_address {
+            writeln!(f, "Contract created address: {}", contract)?;
+        }
+        for log in self.0.logs() {
+            writeln!(f, "log: {:?}", log)?;
+        }
+        Ok(())
     }
 }
 #[derive(Subcommand, Clone, Debug, PartialEq, Eq)]
@@ -239,13 +246,13 @@ async fn main() -> Result<()> {
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{:?}", recepit);
+            println!("{}", DisplayableTransactionReceipt(recepit));
         }
         Command::Token { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);
             let auc = AuctionInstance::new(get_address(auction)?, prov);
             let result = auc.currency().call().await?;
-            println!("Winner: {}", result);
+            println!("Token Address: {}", result);
         }
         Command::Nft { auction } => {
             let prov = ProviderBuilder::new().connect_http(u);
@@ -283,7 +290,7 @@ async fn main() -> Result<()> {
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{:?}", recepit);
+            println!("{}", DisplayableTransactionReceipt(recepit));
         }
         Command::AllowTokenTransaction {
             token,
@@ -304,7 +311,7 @@ async fn main() -> Result<()> {
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{:?}", recepit);
+            println!("{}", DisplayableTransactionReceipt(recepit));
         }
         Command::AllowNftTrasaction {
             collection,
@@ -325,7 +332,7 @@ async fn main() -> Result<()> {
                 .with_timeout(Some(Duration::from_secs(60)))
                 .get_receipt()
                 .await?;
-            println!("{:?}", recepit);
+            println!("{}", DisplayableTransactionReceipt(recepit));
         }
     }
     Ok(())

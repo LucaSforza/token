@@ -1,6 +1,6 @@
 [package]
 name = "auction_controller" # the name of the package
-version = "0.1.0"           # the current version, obeying semver
+version = "1.0.0"           # the current version, obeying semver
 edition = "2021"
 
 [workspace]
