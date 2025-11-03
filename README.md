@@ -94,7 +94,7 @@ tps://ethereum-sepolia-rpc.publicnode.com]
 
 ## How reproduce the results
 
-we use :
+We use :
 
 - <https://book.getfoundry.sh/>
 
@@ -104,9 +104,9 @@ Install foundry and then run:
 ./deployToken.sh
 ```
 
-for deplying the token.
+For deploying the token.
 
-We didn't insert this in auction_controller beacuse this tool is only for controlling auctions.
+We didn't insert this in auction_controller because this tool is only for controlling auctions.
 
 ```bash
 ./deployNFT.sh
