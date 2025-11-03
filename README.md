@@ -11,7 +11,6 @@
   - [Usage](#usage)
     - [Docker](#docker)
     - [Anything else](#anything-else)
-  - [Documentation](#documentation)
   <!--toc:end-->
 
 ## Description
