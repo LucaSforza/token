@@ -163,3 +163,61 @@ Then you can end the auction:
 ```bash
 auction_controller endauction -e $(cat address.txt) -p $(cat secret.key) -a $(cat auction_address.txt)
 ```
+
+### Liquidity Pool
+
+For deploying the liquidity pool:
+
+
+```bash
+./deployToken.sh <private key> <token address>
+```
+
+```bash
+./allowToken.sh <token address> <private key>  <liquidity address> <token amount>
+```
+
+```bash
+./initPool.sh <contract address> <private key> <eth amount> <token amount>
+```
+
+eth value must end with ether or wei. (example: 0.5ether or 100000wei).
+
+Add liquidity:
+
+```bash
+./allowToken.sh <token address> <private key>  <liquidity address> <token amount>
+```
+
+```bash
+./addLiquidity.sh <contract address> <private key> <eth amount> <token amount>
+```
+
+Remove liquidity:
+
+```bash
+./getShare.sh <contract address> <address>
+```
+
+This will get the amount of share
+
+
+```bash
+./removeLiquidity.sh <contract address> <private key> <share>
+```
+
+Swap eth with SapiCoin
+
+contract=$1
+private_key=$2
+value=$3
+
+```bash
+./swapEthForToken.sh <contract address> <private key> <eth amount>
+```
+
+eth value must end with ether or wei. (example: 0.5ether or 100000wei).
+
+```bash
+./swapTokenForEth.sh <contract address> <private key> <token amount>
+```
