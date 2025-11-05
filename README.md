@@ -31,8 +31,14 @@ _Cli_ tool for our blockchain course
 
 ### Brew
 
+Install Homebrew: 
+
 ```bash
- brew tap LucaSforza/auction-controller &&  brew install lucasforza/auction-controller/auction_controller
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+```bash
+ brew tap LucaSforza/auction-controller &&  brew install auction_controller
 ```
 
 ### Manual
@@ -43,8 +49,6 @@ _Cli_ tool for our blockchain course
 ```bash
 #Install foundry
 curl -L https://foundry.paradigm.xyz | bash & & \
-forge bind --crate-name auction  && \
-# build  the binary
 cargo build --release
 ```
 

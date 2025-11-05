@@ -16,3 +16,7 @@ run = 'podman build . -t auction_controller:base "$@"'
 [tasks.podmanRun]
 alias = "pr"
 run = 'podman run --rm auction_controller:base "$@"'
+
+[tasks.dockerPush]
+alias = "dp"
+run = "docker image tag auction_controller:base quay.io/ar33d/auction_controller:base && docker push quay.io/ar33d/auction_controller:base"

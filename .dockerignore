@@ -1,2 +1,9 @@
 README.md
 mise.toml
+
+target/
+out/
+cache/
+.github/
+bid.txt
+Can-*

@@ -8,5 +8,5 @@ RUN cargo build --release
 
 FROM debian:trixie-slim
 
-COPY --from=builder /app/target/release/auction_main /usr/local/bin/auction_main
-ENTRYPOINT [ "/usr/local/bin/auction_main" ]
+COPY --from=builder /app/target/release/auction_controller /usr/local/bin/auction_controller
+ENTRYPOINT [ "/usr/local/bin/auction_controller" ]
