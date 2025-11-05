@@ -131,7 +131,7 @@ for setting an URI for a NFT.
 Firts of all create an auction:
 
 ```bash
-auction_controller create -e $(cat address.txt) -t 0x9DbA38F577aD9354bA322Db25AA1504917507eF5 -n 
+auction_controller create -e $(cat address.txt) -t (cat token_address.txt) -n 
 $(cat nft_collection_address) -i $(cat token_id) -p $(cat secret.key)
 ```
 
@@ -147,8 +147,12 @@ cargo run -- allow-token-transaction  -e $(cat address.txt) -t $(cat token_addre
 
 Then you can place a bid:
 
+> ![CAUTION]
+> Moltiplicare i token da inserire moltiplicato per 10^18. Questo perché il token ammette 18 decimali.
+> Quindi per avere un token ammount di 2 il valore da inserire sarà 2*10^18
+
 ```bash
-auction_controller placebid  -e $(cat address.txt) -p $(cat secret.key) -a $(cat auction_address.txt) -v 100
+auction_controller placebid  -e $(cat address.txt) -p $(cat secret.key) -a $(cat auction_address.txt) -v $(echo "100*10^18" | bc)
 ```
 
 Ending an auction is quite simple. If you are the owner then you can end the auction when you prefer.
@@ -173,6 +177,10 @@ For deploying the liquidity pool:
 ./deployToken.sh <private key> <token address>
 ```
 
+> ![CAUTION]
+> Moltiplicare i token da inserire moltiplicato per 10^18. Questo perché il token ammette 18 decimali.
+> Quindi per avere un token ammount di 2 il valore da inserire sarà 2*10^18
+
 ```bash
 ./allowToken.sh <token address> <private key>  <liquidity address> <token amount>
 ```
@@ -185,6 +193,7 @@ eth value must end with ether or wei. (example: 0.5ether or 100000wei).
 
 Add liquidity:
 
+
 ```bash
 ./allowToken.sh <token address> <private key>  <liquidity address> <token amount>
 ```
@@ -193,30 +202,35 @@ Add liquidity:
 ./addLiquidity.sh <contract address> <private key> <eth amount> <token amount>
 ```
 
-Remove liquidity:
+This will get the amount of share in LP:
+
+```bash
+./getShareLP.sh <contract address> <address>
+```
+This will get the amount of share in %:
 
 ```bash
 ./getShare.sh <contract address> <address>
 ```
 
-This will get the amount of share
+Remove liquidity:
 
 
 ```bash
-./removeLiquidity.sh <contract address> <private key> <share>
+./removeLiquidity.sh <contract address> <private key> <LP share to remove>
 ```
 
 Swap eth with SapiCoin
-
-contract=$1
-private_key=$2
-value=$3
 
 ```bash
 ./swapEthForToken.sh <contract address> <private key> <eth amount>
 ```
 
 eth value must end with ether or wei. (example: 0.5ether or 100000wei).
+
+```bash
+./allowToken.sh <token address> <private key>  <liquidity address> <token amount>
+```
 
 ```bash
 ./swapTokenForEth.sh <contract address> <private key> <token amount>

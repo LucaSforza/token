@@ -2,4 +2,4 @@
 contract=$1
 address=$2
 
-cast call $contract "getLPBalance(address)(uint256)" --rpc-url https://ethereum-sepolia-rpc.publicnode.com $address 
+echo "$(./getShareLP.sh $contract $address | gawk '{print $1}')/$(./getTotalLiquidity.sh $contract | gawk '{print $1}')" | bc -l
