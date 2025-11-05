@@ -100,31 +100,36 @@ We use :
 
 Install foundry and then run:
 
+> ![CAUTION]
+> Moltiplicare i token da inserire moltiplicato per 10^18. Questo perché il token ammette 18 decimali.
+> Quindi per avere un token ammount di 2 il valore da inserire sarà 2*10^18
+
 ```bash
-./deployToken.sh
+./deployToken.sh <private key> <token amount>
 ```
 
 For deploying the token.
 
 We didn't insert this in auction_controller because this tool is only for controlling auctions.
 
-```bash
-./deployNFT.sh
-```
-
-for deploying the NFT collection
+for deploying the NFT collection:
 
 ```bash
-./mintNFT.sh
+./deployNFT.sh <private key> <collection name> <collection symbol>
 ```
 
 for minting a NFT of a collection.
 
 ```bash
-./setURI.sh
+./mintNFT.sh  <private key> <collection address> <address receiver> <token id>
 ```
 
 for setting an URI for a NFT.
+
+
+```bash
+./setURI.sh TODO per ora non abbiamo implementato questa funzionalità
+```
 
 ### Auctions
 
@@ -142,7 +147,7 @@ Before placing a bid you have to approve the trasaction to the Auction.
 The Auction will transfer your tokens to itself. If you will not win the Auction you will be refound by the Auction.
 
 ```bash
-cargo run -- allow-token-transaction  -e $(cat address.txt) -t $(cat token_address.txt) -v 100 -p $(cat secret.key) -a $(cat auction_address.txt)
+auction_controller allow-token-transaction  -e $(cat address.txt) -t $(cat token_address.txt) -v 100 -p $(cat secret.key) -a $(cat auction_address.txt)
 ```
 
 Then you can place a bid:
@@ -174,7 +179,7 @@ For deploying the liquidity pool:
 
 
 ```bash
-./deployToken.sh <private key> <token address>
+./deployLiquidityPool.sh <private key> <token address>
 ```
 
 > ![CAUTION]
