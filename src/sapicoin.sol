@@ -57,7 +57,7 @@ contract SapiCoin is ERC20 {
         balances[msg.sender] = _totalAmount;               // Give the creator all initial tokens
         totalSupply = _totalAmount;                        // Update total supply
         name = "SapiCoin";                                   // Set the name for display purposes
-        decimals = 0;                            // Amount of decimals for display purposes
+        decimals = 18;                            // Amount of decimals for display purposes
         symbol = "SAC";                               // Set the symbol for display purposes
     }
     // TODO: cosa chiama Transfer

@@ -1,10 +1,8 @@
 #!/bin/sh
 
-rpc=$1
 
-private_key=$2
+private_key=$1
 
 shift
-shift
 
-forge create src/test.sol:SapiCoin  --rpc-url $rpc --private-key $private_key  --broadcast --constructor-args $@ 
+forge create src/sapicoin.sol:SapiCoin  --rpc-url https://ethereum-sepolia-rpc.publicnode.com --private-key $private_key  --broadcast --constructor-args $@ 
