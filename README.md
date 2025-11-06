@@ -244,3 +244,5 @@ eth value must end with ether or wei. (example: 0.5ether or 100000wei).
 ```bash
 ./swapTokenForEth.sh <contract address> <private key> <token amount>
 ```
+
+For visualize the exchange rate you can view it [here](https://sepolia.etherscan.io/address/0xac40156910ec9e821874cf112b41f5f4464fe277). The exchange rate is #eth/#SapiCoin is the price in etherium of 1 SapiCoin. #SapiCoin/#eth is the price in SapiCoin of 1 eth.
