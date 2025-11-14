@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.17)  13 NOV 2025 17:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.17)  14 NOV 2025 15:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -325,23 +325,30 @@ Underfull \hbox (badness 2165) in paragraph at lines 188--191
 <nft.png, id=14, 758.835pt x 432.61626pt>
 File: nft.png Graphic file (type png)
 <use nft.png>
-Package pdftex.def Info: nft.png  used on input line 239.
+Package pdftex.def Info: nft.png  used on input line 243.
 (pdftex.def)             Requested size: 258.0pt x 147.08757pt.
 
-Underfull \hbox (badness 3668) in paragraph at lines 249--251
+Underfull \hbox (badness 3668) in paragraph at lines 253--255
 []\OT1/ptm/m/n/10 Lo stan-dard ERC-165 definisce un mec-ca-n-ismo per
  []
 
 [2 <./nft.png>]
-Underfull \hbox (badness 3271) in paragraph at lines 288--291
+Underfull \hbox (badness 3271) in paragraph at lines 292--295
 \OT1/ptm/m/n/10 sente al pro-pri-etario di ap-provare un al-tro in-d-i-
  []
 
 <image_nft.png, id=23, 1927.2pt x 1712.3975pt>
 File: image_nft.png Graphic file (type png)
 <use image_nft.png>
-Package pdftex.def Info: image_nft.png  used on input line 343.
+Package pdftex.def Info: image_nft.png  used on input line 347.
 (pdftex.def)             Requested size: 154.80157pt x 137.5433pt.
+[3 <./image_nft.png>]
+<auction.png, id=28, 660.4675pt x 688.5725pt>
+File: auction.png Graphic file (type png)
+<use auction.png>
+Package pdftex.def Info: auction.png  used on input line 371.
+(pdftex.def)             Requested size: 258.0pt x 268.98347pt.
+
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -353,25 +360,25 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[3 <./image_nft.png>] (./conference_101719.aux)
+[4 <./auction.png>] (./conference_101719.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-03-14>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 5969 strings out of 474104
- 89502 string characters out of 5743467
- 1967493 words of memory out of 5000000
- 28290 multiletter control sequences out of 15000+600000
+ 5977 strings out of 474104
+ 89640 string characters out of 5743467
+ 1968493 words of memory out of 5000000
+ 28298 multiletter control sequences out of 15000+600000
  597682 words of font info for 115 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  57i,11n,65p,292b,1338s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on conference_101719.pdf (3 pages, 240107 bytes).
+Output written on conference_101719.pdf (4 pages, 276727 bytes).
 PDF statistics:
- 67 PDF objects out of 1000 (max. 8388607)
- 37 compressed objects within 1 object stream
+ 72 PDF objects out of 1000 (max. 8388607)
+ 39 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
 

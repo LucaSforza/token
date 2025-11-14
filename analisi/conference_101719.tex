@@ -200,6 +200,8 @@ Cos'i uno smart contract può usare i nostri token per offrire un servizio.
 ERC-20 offre anche un insieme da eventi che un token dovrebbe emettere quando cambia lo stato interno del contratto, così le operazioni
 avvenute in uno smart contract possono essere rintracciate e visualizzati da applicazioni front-end come etherscan. % TODO: link etherscan
 
+\subsection{Eventi}
+
 Nella figura \ref{uml:token} sono descritti i vari eventi emessi un modo asincrono dall'ERC-20, in particolare:
 
 \begin{enumerate}
@@ -218,6 +220,8 @@ In Solidity esiste un costrutto per rappresentare questi eventi come mostrato in
 \caption{Events on Solidity} % TODO: inglese sbagliato
 \label{code:events}
 \end{figure}
+
+\subsection{Implementazione SapiCoin}
 
 Per implementare uno specifico Token, nel nostro caso SapiCoin, non è presente
 una logica extra oltre ad essere un token. Se volessimo implementare uno stablecoin oppure un wrapped coin dovremmo
@@ -346,6 +350,72 @@ Per lo scopo di questo progetto abbiamo creato un NFT per l'immagine \ref{img:pe
 \end{figure}
 
 \section{Auction}
+
+Non esiste uno standard per le auction di NFT, quindi per crearne una bisogna occorrere ad altre strategie.
+
+Per esempio si può utilizzare un sistema di auction con i contratti già deployati sulla blockchain
+e creare un asta tramite quel sistema. Cos'i ogni utente del sistema può accedere alla tua asta, per esempio OpenSea % TODO: reference
+
+Oppure creare lo smart contract a mano dell'asta e fare il deploy nella blockchain.
+
+Per il secondo approccio abbiamo lo svantaggio che non abbiamo un applicazione front-end dove è possibile
+usufruire del servizio. Ma quello che si può fare è pubblicare il contratto su etherscan cosi collegando un Wallet (come Metamask)
+si può interaggire con lo smart contract tramite web browser.
+
+Purtroppo i principali marketplace di NFT hanno tolto il loro supporto sulle blockchain di test, quindi
+abbiamo optato ad implemntarla da zero.
+
+\subsection{Design of Auction}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.5\textwidth]{auction.png}}
+\caption{UML of a Auction}
+\label{uml:auction}
+\end{figure}
+
+L'obbiettivo dell'asta di cui abbiamo fatto il design è quello di crare uno smart contract
+riutilizzabile con qualsiasi tipo di token e con qualsiasi tipo di
+collezione NFT.
+
+Ecco la descrizione dei metodi dell'asta:
+
+\begin{enumerate}
+    \item \textbf{Winner()}:
+    Ritorna l'address che ha piazzato il bid più alto al momento della chiamata del metodo. l'address è lo zero
+    se ancora nessun bid è stato piazzato.
+
+    \item \textbf{topBid()}:  
+    Ritorna l'address che ha piazzato il bid più alto insieme al valore del bid piazzato al momento della chiamata del metodo. l'address e il valore del bid è lo zero
+    se ancora nessun bid è stato piazzato.
+
+    \item \textbf{placeBid(uint256 value)}:
+    Permette di piazzare un bid nell'asta. Per esegure questo metodo bisogna prima approvare al auction
+    di poter trasferire i propri token. Quando si esegue placebid l'auction prende i token specificati nel campo \texttt{value}
+    e li trasferisce a se stesso. Si consiglia di approvare all'auction di poter trasferire un numero infinito di token, così ad ogni piazzamento del bid
+    non bisogna fare 2 transazioni. Se il bid è già stato piazzato allora viene sommato il valore.
+
+    \item \textbf{endAuction()}:
+    Permette (solo al creatore dell'auction) di chiudere l'asta.
+    Una volta chiusa l'asta non è possibile più piazzare dei bid per essa.
+    Chi ha vinto l'asta riceverà NFT (prima di chiamare questo metodo il creatore dell'asta deve approvare lo scambio del token)
+    e il creatore riceverà i token. Tutti gli altri bidder verranno rimborsati.
+\end{enumerate}
+
+\subsection{Events}
+
+Gli eventi sono trasmessi ad ogni cambiamento di stato dello smart contract come mostrato in figura \ref{uml:auction}.
+
+In particolare gli eventi sono:
+
+\begin{enumerate}
+    \item \textbf{Bid(uint256 value, address indexed creator)}:  
+    Viene emesso ad ogni bid effettuato.
+    \item \textbf{endedAuction(address indexed winner)}:  
+    Viene emesso quando viene chiusa l'asta
+\end{enumerate}
+
+\section{Liquidity Pool}
+
 
 
 \end{document}

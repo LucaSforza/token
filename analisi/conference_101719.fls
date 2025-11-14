@@ -198,6 +198,11 @@ INPUT ./image_nft.png
 INPUT ./image_nft.png
 INPUT ./image_nft.png
 INPUT ./image_nft.png
+INPUT ./auction.png
+INPUT ./auction.png
+INPUT ./auction.png
+INPUT ./auction.png
+INPUT ./auction.png
 INPUT conference_101719.aux
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb

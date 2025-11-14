@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1763049797.32409 "/Users/lucasforza/Programming/token/analisi/conference_101719.tex" "conference_101719.pdf" "conference_101719" 1763049798.65239 0
-  "/Users/lucasforza/Programming/token/analisi/conference_101719.tex" 1763049797.03129 16750 67344fd047726bec970cd16668ac0942 ""
+["pdflatex"] 1763129458.79417 "/Users/lucasforza/Programming/token/analisi/conference_101719.tex" "conference_101719.pdf" "conference_101719" 1763129459.63455 0
+  "/Users/lucasforza/Programming/token/analisi/conference_101719.tex" 1763129458.60326 19921 f53cdf783c430f5c7e89922fa70c6987 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -81,8 +81,9 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1713342239 5474190 6dcabce74a8cc1ac6c708b578cc057af ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1713342388 8222891 feab7a395595673540740b060d5c5987 ""
   "/usr/local/texlive/2024/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
-  "conference_101719.aux" 1763049798.57974 1885 11790a8da1dabaf213df0b0083bf5e7b "pdflatex"
-  "conference_101719.tex" 1763049797.03129 16750 67344fd047726bec970cd16668ac0942 ""
+  "auction.png" 1763128517.19807 93620 75e91fefe57a83066dbe335c0744bee4 ""
+  "conference_101719.aux" 1763129459.58521 2608 6956445ea982d3d343a18d26598688ef "pdflatex"
+  "conference_101719.tex" 1763129458.60326 19921 f53cdf783c430f5c7e89922fa70c6987 ""
   "image_nft.png" 1763049631.21897 38851 06f62b927265aa0657e0fff427989254 ""
   "nft.png" 1763038017.93798 105344 f270b56442accd7a21df571b181f7540 ""
   "token.png" 1763031436.44581 68620 da077d93c38e7517a83c17ab1d48303a ""
