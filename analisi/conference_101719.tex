@@ -158,7 +158,7 @@ Of course, this is purely syntactic sugar, because the EVM itself is already pol
         /* implementation */
     }
 \end{lstlisting}
-\caption{Polymorphism on Solidity} % TODO: inglese sbagliato
+\caption{Polymorphism on Solidity}
 \label{code:erc20}
 \end{figure}
 
@@ -243,7 +243,13 @@ In other words, it allows other contracts to query a contract and determine if i
 allows checking whether the contract implements the interface identified by \texttt{interfaceID}.
 Returns \texttt{true} if the interface is supported, and \texttt{false} otherwise.
 
-% TODO: dire più cose
+Secondo lo standard la funzione supportsInterface deve ritornare true sse interfaceID è uguale allo xor
+della segnatura delle funzioni di cui è implementata l'interfaccia. In figura \ref{} è  %TODO: aggiungi reference anche sotto
+dato un esempio.
+
+Anche se, Solidity ci offre direttamente nella sintassi del linguaggio,
+un modo per ottenere questo valore pre-calcolato (quindi più gas efficient), vedere figura \ref{}.
+
 
 \subsection{ERC-721 Standard}
 The ERC-721 interface defines the standard for NFTs.
@@ -384,15 +390,14 @@ Emitted when the auction is closed.
 
 \section{Implementation Details}
 
-% TODO: introduzione agli ambienti di sviluppo solidity
 
 Solidity, a differenza dei linguaggi di programmazione tradizionali, 
 introducono vincoli aggiuntivi legati al gas, alla sicurezza e alla gestione delle transazioni.
 
-Diffatti è possibile utilizzare questi tool per comunicare direttamente con la blockchain, ergo effettuare transazioni,
+Diffatti è possibile utilizzare ambienti di sviluppo Solidity per comunicare direttamente con la blockchain, ergo effettuare transazioni,
 fare il deploy di smart contract e pubblicare il codice sorgente dei contratti su servizi come etherscan.
 
-Un'altro vincolo importante che aggiunge solidity è che una volta fatto il deploy sulla blockchain
+Uno dei vincoli più importante che aggiunge Solidity è che una volta fatto il deploy sulla blockchain
 non è possibile modificarlo, dato che pubblicare smart contract può avere importanti costi di deploy è fondamentale
 essere sicuri della corretteza del codice. Quindi il testing è fondamentale, oppure la verifica formale
 del codice, ovvero che i requisiti (visti come invarianti del sistema) siano soddisfatti.
@@ -401,66 +406,27 @@ Per verificare la corretteza del codice è possibile usare la logica (Firts Orde
 proprietà nel nostro codice. Oppure fare fuzzing testing, ergo definire le invarianti e poi chiamare i vari metodi di uno smart contract
 con input a caso fino a quando le invarianti non vengono confutate.
 
-Esistono molti ambienti di sviluppo per solidity. Noi abbiamo implementato gli smart contract presentati in questo progetto
-con Foundry, ma uno dei più famosi è OpenZeppelin.
+\subsubsection{State of Art}
 
+Esistono molti ambienti di sviluppo per Solidity. Noi abbiamo scelto Foundry.
+Un altro molto famoso è OpenZeppelin.
 
-\subsection{OpenZeppelin}
-
-% TODO: spiega al volo cos'è openzeppelin e come creare token e NFT su openzeppelin ad alto livello
-
-OpenZeppelin è uno dei framework più famosi per lavorare su soldity.
-
-Per creare Token ERC-20 o ERC-721 esistono dei costrutti per poterli implementare con pochissime righe di codice.
-
-Se il Token richiede altra logica (per esempio per creare un Wrapped Coin) è possibile aggiungere metodi oltre ai costrutti già definiti.
-
-\begin{figure}
-\centering
-\begin{lstlisting}[style=soliditystyle]
-pragma solidity ^0.8.0;
-
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-contract SapiCoin is ERC20 {
-    constructor(uint256 initialSupply) ERC20("SapiCoin", "SAC") {
-        _mint(msg.sender, initialSupply);
-    }
-}
-
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
-contract NFTCollection is ERC721URIStorage {
-    constructor() ERC721("ClimbingOnTrees", "COT") { }
-}
-\end{lstlisting}
-\caption{Implementation of ERC-20 and ERC-721} 
-\label{code:openzeppelin}
-\end{figure}
-
-In figura \ref{code:openzeppelin} è possibile vedere l'implementazione dei smart contract per implementare ERC-20 e ERC-721.
-
-Tuttavia non abbiamo scelto questo tool per creare i nostri smart contract poiché
-OpenZeppelin è basato su JavaScript rendendo difficile lavorare con le dipendenze che introduce NodeJS.
 
 \subsection{Foudry}
 
 Foundry introduce un intero ecosistema per lavorare sulle blockchain EVM compatibili.
 
-Foundry è composto da 3 elementi:
+Foundry è composto da 3 utility:
 
 \begin{enumerate}
   \item \texttt{forge} permette di compilare, testare, debuggare, deployare e verificare smart contracts.
-  \item \texttt{anvil} permette di istanziare un nodo di sviluppo della blockchain, facendo una fork della mainnet.
+  \item \texttt{anvil} permette di istanziare un nodo di sviluppo locale della blockchain scelta, facendone una fork.
   \item \texttt{cast} is a swiss army knife for interacting with onchain applications from the command line. 
 \end{enumerate}
 
+% TODO: dire come fare il deploy di uno smart contract
 
-
-\subsection{Verifica dei requisiti}
+% TODO: dire come interagire con lo smart contract onchain
 
 \section{Liquidity Pool}
 
@@ -511,6 +477,8 @@ Each component is independent yet composable, enabling reuse, modular upgrades, 
 The Liquidity Pool offers an automated mechanism to acquire SapiCoin, removing the need for manual token distribution, while the Auction contract provides a programmable marketplace for NFTs.
 
 Overall, the system shows how standardized interfaces (ERC-20, ERC-165, ERC-721) combined with custom logic make it possible to build decentralized applications where multiple contracts cooperate reliably without central authority.
+
+% TODO: fare esempi di applicazioni onchain
 
 \bibliography{bibliography}
 
