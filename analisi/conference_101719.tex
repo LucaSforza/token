@@ -10,6 +10,8 @@
 
 \usepackage{listings}
 
+\bibliographystyle{plain}
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
@@ -106,58 +108,48 @@ Other smart contracts (e.g., an auction) can use Tokens as a means of payment wi
 
 However, to avoid binding a smart contract to a specific Token and to promote code reusability, the concept of a Token can be abstracted.
 
-The Ethereum community standardized this abstraction through a document known as ERC-20. % TODO: reference
+The Ethereum community standardized this abstraction through a document known as ERC-20. \cite{erc20}
 
 A Token is therefore represented by an Interface (a concept similar to those found in other programming languages).
 
 A smart contract that aims to function as a Token must extend this interface and implement its methods.
 
-The same concept is applied to NFTs, standardized through ERC-721. % TODO: reference
+The same concept is applied to NFTs, standardized through ERC-721. \cite{erc721}
 
 In contrast, there is no community standard for auctions, so the design of such smart contracts must be created from scratch.
 
-% TODO: parla della liquidity pool
+In addition to token transfers and auctions, our system includes a liquidity pool implemented using Uniswap v3, which allows users to trade between Ether and SapiCoin.
 
 \section{Token}
 
-ERC-20 è lo standard che rappresenta un token nelle blockchain EVM compatibili.
+ERC-20 is the standard that represents a token on EVM-compatible blockchains.
 
-Non esiste una figura centrale che possono emmettere questi standard, ma community come Etherum Magician
-, permettono di discutere di miglioramenti dello standard Ethereum tramite IEA % TODO: reference
+There is no central authority responsible for issuing these standards; instead, communities such as Ethereum Magicians provide a space to discuss improvements to the Ethereum standard through EIPs \cite{ethereum-magicians}.
 
-Lo standard impone che un token è uno smart contract con
-determinati metodi implementati.
+The standard requires that a token is a smart contract implementing a specific set of methods.
 
-\subsection{Polimorfismo dell'EVM}
+\subsection{Polymorphism in the EVM}
 
-Per fare questo si necessita del polimorfismo.
+Achieving this requires polymorphism.
 
-Nell'Ethereum Virtual Machine non esistono istruzioni per gestire classi astratte, ma la VM stessa è poliformica.
+The Ethereum Virtual Machine does not provide instructions for handling abstract classes, but the VM itself is polymorphic.
 
-Quando si chiama un metodo di uno smart contract tramite una transazione, per accedere
-all'indirizzo di memoria del metodo si esegue l'hash della segnatura della funzione. % reference
+When a method of a smart contract is invoked through a transaction, the memory address of the method is accessed by computing the hash of the function signature. % reference
 
-Nel caso il metodo chiamato non esiste allora viene chiamata una funzione di fallback di default
-(che può essere sovrascritta).
+If the invoked method does not exist, a default fallback function is executed (which can be overridden).
 
-Grazie a questo funzionamento dell'EVM è possibile implementare
-un qualsiasi standard.
+Thanks to this behavior of the EVM, it is possible to implement any standard.
 
-Se volessimio implementare un contratto che gestisce un asta di NFTs
-allora esso chiamerà le funzioni che hanno l'hash della signatura come quelle 
-definite dallo standard ERC-20.
+If we want to implement a contract that manages an NFT auction, it will call the functions whose signature hashes match those defined by the ERC-20 standard.
 
 \subsection{Design of the standard ERC-20}
 
-Uno smart contract lo possiamo visualizzare come una classe.
+A smart contract can be viewed as a class. \cite{jurgelaitis2022}
 
-Linguaggi di programmazione come solidity permettono
-di rappresentare l'idea di Interfaccia. Quindi possiamo vicolare uno smart
-contract ad avedere i metodi imposti dallo standard eredidando i metodi astratti
-di un interfaccia come mostrato in Fig. \ref{code:erc20}.
+Programming languages such as Solidity allow us to express the idea of an interface.
+This means we can constrain a smart contract to include the methods required by a standard by inheriting the abstract methods of an interface, as shown in Fig. \ref{code:erc20}.
 
-Ovviamente questo è puro zucchero sintattico poiché la EVM stessa è già poliformica
-, infatti l'erederietà può essere omessa.
+Of course, this is purely syntactic sugar, because the EVM itself is already polymorphic; in fact, inheritance can even be omitted.
 
 \begin{figure}
 \centering
@@ -166,7 +158,7 @@ Ovviamente questo è puro zucchero sintattico poiché la EVM stessa è già poli
         /* implementation */
     }
 \end{lstlisting}
-\caption{Polimorfism on Solidity} % TODO: inglese sbagliato
+\caption{Polymorphism on Solidity} % TODO: inglese sbagliato
 \label{code:erc20}
 \end{figure}
 
@@ -177,65 +169,60 @@ Ovviamente questo è puro zucchero sintattico poiché la EVM stessa è già poli
 \label{uml:token}
 \end{figure}
 
-In Figura \ref{uml:token} è possibile vedere un overview dello standard ERC-20.
+Figure \ref{uml:token} shows an overview of the ERC-20 standard.
 
-Lo standard ERC-20 impone per un token di implementare i seguenti metodi:
-
-\begin{enumerate}
-    \item \textbf{balanceOf(address owner)} ritorna la quantità di token che un certo address possiede
-    \item \textbf{transfer(address to, uint256 value)} permette di inviare dei token verso un determinato address (parametro \texttt{to}).
-    \item \textbf{approve(address spender, uint256 value)} permette ad un address (lo \texttt{spender}) di poter spendere una certa quantà di token che possiede l'address che invia la trasazione.
-    \item \textbf{transferFrom(address from, address to, uint256 value)} permette di trasferire da un certo address (owner dei token) (non necesssariamente quello che esegue la trasazione)
-    verso un altro address una determinata quantità di token specificata in \texttt{value}. Chiaramente non deve essere possibile a chi non ha diritto di spendere i nostri token, infatti
-    chi esegue la trasazione deve essere stato approvato (tramite il metodo approve) di poterla eseguire.
-    \item \textbf{allowance(address owner, address spender)} permette di sapere quanti token un \texttt{owner} ha approvato verso uno \texttt{spender}.
-\end{enumerate}
-
-Tutto il sistema di approve è molto utile da un punto di vista programmatico.
-
-Noi utenti possiamo chiamare approve verso un certo smart contract per una determinata quantità di token.
-
-Cos'i uno smart contract può usare i nostri token per offrire un servizio.
-
-ERC-20 offre anche un insieme da eventi che un token dovrebbe emettere quando cambia lo stato interno del contratto, così le operazioni
-avvenute in uno smart contract possono essere rintracciate e visualizzati da applicazioni front-end come etherscan. % TODO: link etherscan
-
-\subsection{Eventi}
-
-Nella figura \ref{uml:token} sono descritti i vari eventi emessi un modo asincrono dall'ERC-20, in particolare:
+The ERC-20 standard requires a token to implement the following methods:
 
 \begin{enumerate}
-    \item Transfer che traccia i trasferimenti di token tra utenti.
-    \item Approval che traccia le approvazioni da owner a spender.
+\item \textbf{balanceOf(address owner)} returns the amount of tokens owned by a given address.
+\item \textbf{transfer(address to, uint256 value)} allows sending tokens to a specific address (the \texttt{to} parameter).
+\item \textbf{approve(address spender, uint256 value)} allows an address (the \texttt{spender}) to spend a certain amount of tokens owned by the address that submits the transaction.
+\item \textbf{transferFrom(address from, address to, uint256 value)} allows transferring a specified amount of tokens (\texttt{value}) from one address (the token owner, not necessarily the transaction sender) to another address.
+Obviously, it must not be possible for someone without permission to spend our tokens; therefore, the sender must have been granted approval (via the \texttt{approve} method).
+\item \textbf{allowance(address owner, address spender)} returns how many tokens an \texttt{owner} has approved for a given \texttt{spender}.
 \end{enumerate}
 
-In Solidity esiste un costrutto per rappresentare questi eventi come mostrato in Fig. \ref{code:events}.
+The entire approval mechanism is very useful from a programming perspective.
 
+Users can call \texttt{approve} on a given smart contract for a specified amount of tokens.
+
+In this way, a smart contract can use our tokens to provide a service.
+
+ERC-20 also defines a set of events that a token should emit whenever the contract’s internal state changes, so that the operations executed within a smart contract can be tracked and displayed by front-end applications such as Etherscan. % TODO: link etherscan
+
+\subsection{Events}
+
+Figure \ref{uml:token} describes the various events emitted asynchronously by ERC-20, specifically:
+
+\begin{enumerate}
+\item \textbf{Transfer}, which tracks token transfers between users.
+\item \textbf{Approval}, which tracks approvals from an owner to a spender.
+\end{enumerate}
+
+Solidity provides a construct to represent these events, as shown in Fig. \ref{code:events}.
 \begin{figure}
 \centering
 \begin{lstlisting}[style=soliditystyle]
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 \end{lstlisting}
-\caption{Events on Solidity} % TODO: inglese sbagliato
+\caption{Events on Solidity} 
 \label{code:events}
 \end{figure}
 
-\subsection{Implementazione SapiCoin}
+\subsection{SapiCoin Implementation}
 
-Per implementare uno specifico Token, nel nostro caso SapiCoin, non è presente
-una logica extra oltre ad essere un token. Se volessimo implementare uno stablecoin oppure un wrapped coin dovremmo
-aggiungere metodi per gestire lo scambio del token con la vera valuta che rappresenta (per esempio USDT o WETH).
+To implement a specific token, in our case SapiCoin, there is no additional logic beyond being a token. If we wanted to implement a stablecoin or a wrapped coin, we would need to add methods to manage the exchange of the token with the real-world currency it represents (for example, USDT or WETH).
 
-L'implementazione delle altre funzionalità standard di un token è facilmente reperibile online (in alcuni casi sono embedded in ambienti di sviluppo soldity).
+The implementation of the other standard token functionalities is easily available online (in some cases, they are embedded in Solidity development environments).
 
-L'unica cosa modificata sono le vanità del token, ovvero il nome del token, la quantità di decimali che il token possiede (nel nostro caso 18 decimali) e il simbolo del token (SAC).
+The only aspects modified are the token’s “vanity” features, namely the token’s name, the number of decimals the token uses (in our case 18 decimals), and the token symbol (SAC).
 
-Avendo messo 18 decimali la quantità più piccola di SapiCoin che è possibile ottenere è $1 \cdot 10^{-18}$.
+With 18 decimals, the smallest amount of SapiCoin that can be obtained is $1 \cdot 10^{-18}$.
 
-Però esendo solo una vanità, a basso livello abbiamo accesso solo ad un numero intero unsigned da 256 bit.
+However, being just a vanity feature, at a low level we only have access to a 256-bit unsigned integer.
 
-Quindi ad esempio 4 SapiCoin in memoria è salvato come $4 \cdot 10^{18}$.
+For example, 4 SapiCoin in memory is stored as $4 \cdot 10^{18}$.
 
 \section{NFTs}
 
@@ -246,124 +233,115 @@ Quindi ad esempio 4 SapiCoin in memoria è salvato come $4 \cdot 10^{18}$.
 \end{figure}
 
 
-Secondo lo standard very ERC-721 compliant contract must implement the ERC721 and ERC165 interfaces come mostrato in figura
-\ref{uml:nft}. % TODO: reference https://eips.ethereum.org/EIPS/eip-721
+According to the standard, every ERC-721 compliant contract must implement the ERC721 and ERC165 interfaces, as shown in Figure \ref{uml:nft}. % TODO: reference https://eips.ethereum.org/EIPS/eip-721
 
-\subsection{Standard ERC-165}
-Lo standard ERC-165 definisce un meccanismo per dichiarare e verificare se un contratto implementa una determinata interfaccia.  
-In altre parole, serve per permettere ad altri contratti di interrogare un contratto e capire se supporta una certa funzionalità (ad esempio ERC-721, ERC-20, ecc.).
+\subsection{ERC-165 Standard}
+The ERC-165 standard defines a mechanism to declare and verify whether a contract implements a specific interface.
+In other words, it allows other contracts to query a contract and determine if it supports a certain functionality (e.g., ERC-721, ERC-20, etc.).
 
-\textbf{supportsInterface(bytes4 interfaceID)}:  
-    permette di verificare se il contratto implementa l'interfaccia identificata da \texttt{interfaceID}.  
-    Restituisce \texttt{true} se l'interfaccia è supportata e \texttt{false} altrimenti.  
+\textbf{supportsInterface(bytes4 interfaceID)}:
+allows checking whether the contract implements the interface identified by \texttt{interfaceID}.
+Returns \texttt{true} if the interface is supported, and \texttt{false} otherwise.
 
-\subsection{Standard ERC-721}
-L'interfaccia ERC-721 definisce lo standard per i NFT. 
-Ogni token è unico e distinto, a differenza degli ERC-20 che sono fungibili (tutti uguali).  
-Le funzioni da implementare sono:
+% TODO: dire più cose
 
-\begin{enumerate}
-    \item \textbf{balanceOf(address owner)}:  
-    restituisce il numero di NFT posseduti da un determinato indirizzo.  
-
-    \item \textbf{ownerOf(uint256 tokenId)}:  
-    restituisce l'indirizzo del proprietario del token identificato da \texttt{tokenId}.  
-
-    \item \textbf{safeTransferFrom(address from, address to, uint256 tokenId, bytes data)}:  
-    trasferisce in modo sicuro la proprietà di un NFT da un indirizzo a un altro.  
-    Se il destinatario è un contratto, viene chiamata la funzione \texttt{onERC721Received} per verificare che possa ricevere NFT.
-    Per gli scopi di questo progetto abbiamo ignorato questo caso e per il contratto \texttt{auction} non abbiamo implementato la funzione \texttt{onERC721Received}.
-    Genera un errore se:
-    \begin{itemize}
-        \item \texttt{msg.sender} non è il proprietario o un operatore autorizzato;
-        \item \texttt{from} non è l'attuale proprietario;
-        \item \texttt{to} è lo zero address;
-        \item il token non esiste.
-    \end{itemize}
-
-    \item \textbf{safeTransferFrom(address from, address to, uint256 tokenId)}:  
-    identica alla funzione precedente, ma senza il parametro aggiuntivo \texttt{data} (che viene impostato a stringa vuota).
-
-    \item \textbf{transferFrom(address from, address to, uint256 tokenId)}:  
-    trasferisce la proprietà di un NFT senza effettuare controlli aggiuntivi sulla capacità del destinatario di riceverlo.  
-    È responsabilità del chiamante assicurarsi che \texttt{to} sia in grado di gestire NFT.  
-    Genera errore nelle stesse condizioni di \texttt{safeTransferFrom}.
-
-    \item \textbf{approve(address approved, uint256 tokenId)}:  
-    consente al proprietario di approvare un altro indirizzo (\texttt{approved}) per trasferire il token specificato (\texttt{tokenId}).  
-    Se viene passato l'indirizzo zero, rimuove ogni approvazione esistente.
-
-    \item \textbf{setApprovalForAll(address operator, bool approved)}:  
-    permette a un utente di abilitare o disabilitare un operatore che può gestire tutti i suoi NFT.  
-    Genera l'evento \texttt{ApprovalForAll} e consente di avere più operatori per lo stesso proprietario.
-
-    \item \textbf{getApproved(uint256 tokenId)}:  
-    restituisce l'indirizzo approvato per la gestione di un determinato token.  
-    Se non esiste alcun indirizzo approvato, restituisce lo zero address.  
-    Genera errore se il token non è valido.
-
-    \item \textbf{isApprovedForAll(address owner, address operator)}:  
-    verifica se un operatore è stato approvato per gestire tutti i token di un determinato proprietario.  
-    Restituisce \texttt{true} se è autorizzato, \texttt{false} altrimenti.
-\end{enumerate}
-
-Come ERC-20 i contratti che implementano ERC-721 dovrebbero emettere i seguenti eventi:
+\subsection{ERC-721 Standard}
+The ERC-721 interface defines the standard for NFTs.
+Each token is unique and distinct, unlike ERC-20 tokens which are fungible (all identical).
+The functions to implement are:
 
 \begin{enumerate}
-    \item \textbf{Transfer(address indexed from, address indexed to, uint256 indexed tokenId)}:  
-    viene emesso ogni volta che la proprietà di un NFT cambia, sia in caso di trasferimento, creazione (\texttt{from == 0}) o distruzione (\texttt{to == 0}).  
-    Quando un trasferimento avviene, l'eventuale indirizzo approvato per quel token viene automaticamente azzerato.
+    \item \textbf{balanceOf(address owner)}:
+    returns the number of NFTs owned by a given address.
+\item \textbf{ownerOf(uint256 tokenId)}:  
+returns the address of the owner of the token identified by \texttt{tokenId}.  
 
-    \item \textbf{Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)}:  
-    viene emesso quando viene impostato o rimosso un indirizzo approvato per un NFT specifico.  
-    L'indirizzo zero indica che non esiste più un indirizzo approvato per quel token.
+\item \textbf{safeTransferFrom(address from, address to, uint256 tokenId, bytes data)}:  
+safely transfers ownership of an NFT from one address to another.  
+If the recipient is a contract, the function \texttt{onERC721Received} is called to verify that it can receive NFTs.  
+For the purposes of this project, we ignored this case, and the \texttt{auction} contract does not implement \texttt{onERC721Received}.  
+It throws an error if:
+\begin{itemize}
+    \item \texttt{msg.sender} is not the owner or an authorized operator;
+    \item \texttt{from} is not the current owner;
+    \item \texttt{to} is the zero address;
+    \item the token does not exist.
+\end{itemize}
 
-    \item \textbf{ApprovalForAll(address indexed owner, address indexed operator, bool approved)}:  
-    viene emesso quando un proprietario abilita o disabilita un operatore che può gestire tutti i suoi NFT.  
-    L'operatore può quindi effettuare trasferimenti o approvazioni per conto del proprietario.
+\item \textbf{safeTransferFrom(address from, address to, uint256 tokenId)}:  
+identical to the previous function but without the additional \texttt{data} parameter (set to an empty string).  
+
+\item \textbf{transferFrom(address from, address to, uint256 tokenId)}:  
+transfers ownership of an NFT without performing additional checks on the recipient’s ability to handle it.  
+It is the caller’s responsibility to ensure that \texttt{to} can handle NFTs.  
+Throws errors under the same conditions as \texttt{safeTransferFrom}.  
+
+\item \textbf{approve(address approved, uint256 tokenId)}:  
+allows the owner to approve another address (\texttt{approved}) to transfer the specified token (\texttt{tokenId}).  
+Passing the zero address removes any existing approval.  
+
+\item \textbf{setApprovalForAll(address operator, bool approved)}:  
+allows a user to enable or disable an operator that can manage all of their NFTs.  
+Emits the \texttt{ApprovalForAll} event and allows multiple operators per owner.  
+
+\item \textbf{getApproved(uint256 tokenId)}:  
+returns the address approved to manage a specific token.  
+Returns the zero address if no address is approved.  
+Throws an error if the token is invalid.  
+
+\item \textbf{isApprovedForAll(address owner, address operator)}:  
+checks if an operator has been approved to manage all tokens of a given owner.  
+Returns \texttt{true} if authorized, \texttt{false} otherwise.
 \end{enumerate}
 
-\subsection{Metadata e vanità opzionali}
+Like ERC-20, contracts implementing ERC-721 should emit the following events:
 
-Estendere l'interfaccia \texttt{ERC721Metadata} non è obbligatorio
-per lo standard ERC-721, serve unicamente per aggiungere vanità ai NFT.
+\begin{enumerate}
+\item \textbf{Transfer(address indexed from, address indexed to, uint256 indexed tokenId)}:
+emitted whenever ownership of an NFT changes, whether by transfer, creation (\texttt{from == 0}), or destruction (\texttt{to == 0}).
+When a transfer occurs, any approved address for that token is automatically cleared.
 
-Grazie a questa interfaccia possiamo ottenere il nome della collezione NFT, il simbolo della collezione e
-tramite il metodo \textbf{tokenURI(uint256 tokenId)} possiamo ottenere URL associato all'NFT.
+\item \textbf{Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)}:  
+emitted when an approved address is set or removed for a specific NFT.  
+The zero address indicates that no approved address exists for that token.  
 
-Questo link può essere verso l'immagine che NFT rappresenta o altre informazioni.
+\item \textbf{ApprovalForAll(address indexed owner, address indexed operator, bool approved)}:  
+emitted when an owner enables or disables an operator to manage all their NFTs.  
+The operator can then perform transfers or approvals on behalf of the owner.
+\end{enumerate}
 
-% TODO: verificare cosa fa veramente Ferrari
-Per esempio Ferrari crea un NFT per una macchina venduta, quindi potrebbero implementare questa interfaccia per la loro collezione NFT
-per dare in output un link ad una pagina internet dove sono salvate tutte le informazioni della macchina.
 
-Dipende molto dalle funzionalità che vogliamo incorporare nel nostro NFT, ma l'archiettura dietro agli NFT rimane sempre la stessa.
+\subsection{Optional Metadata and Vanity}
 
-Infatti anche per lo standard ERC-721 come per lo standard ERC-20 possiamo trovare tantissime implementazioni da riusare per la nostra collezione.
+Extending the \texttt{ERC721Metadata} interface is not mandatory for the ERC-721 standard; it is used solely to add vanity features to NFTs.
 
-Per lo scopo di questo progetto abbiamo creato un NFT per l'immagine \ref{img:pepe}.
+Through this interface, we can obtain the name of the NFT collection, the collection symbol, and, via the \textbf{tokenURI(uint256 tokenId)} method, the URL associated with the NFT.
+
+This link can point to the image that the NFT represents or to other related information.
+
+The functionalities included depend heavily on what we want to incorporate into our NFT, but the underlying architecture of NFTs remains the same.
+
+Indeed, for the ERC-721 standard, just like for ERC-20, there are many reusable implementations available for our collection.
+
+For the purpose of this project, we created an NFT for the image in Figure \ref{img:pepe}.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[width=0.3\textwidth]{image_nft.png}}
-\caption{Imagine associata all'NFT che abbiamo fatto il minting}
+\caption{Image associated with the NFT we minted}
 \label{img:pepe}
 \end{figure}
 
 \section{Auction}
 
-Non esiste uno standard per le auction di NFT, quindi per crearne una bisogna occorrere ad altre strategie.
+There is no standard for NFT auctions, so creating one requires using other strategies.
 
-Per esempio si può utilizzare un sistema di auction con i contratti già deployati sulla blockchain
-e creare un asta tramite quel sistema. Cos'i ogni utente del sistema può accedere alla tua asta, per esempio OpenSea % TODO: reference
+For example, one can use an auction system with contracts already deployed on the blockchain and create an auction through that system. This way, every user of the system can access your auction, for instance via OpenSea. % TODO: reference
 
-Oppure creare lo smart contract a mano dell'asta e fare il deploy nella blockchain.
+Alternatively, one can manually create the auction smart contract and deploy it on the blockchain.
 
-Per il secondo approccio abbiamo lo svantaggio che non abbiamo un applicazione front-end dove è possibile
-usufruire del servizio. Ma quello che si può fare è pubblicare il contratto su etherscan cosi collegando un Wallet (come Metamask)
-si può interaggire con lo smart contract tramite web browser.
+With the second approach, the drawback is that there is no front-end application to interact with the service. However, it is possible to publish the contract on Etherscan so that, by connecting a wallet (such as MetaMask), users can interact with the smart contract directly through a web browser.
 
-Purtroppo i principali marketplace di NFT hanno tolto il loro supporto sulle blockchain di test, quindi
-abbiamo optato ad implemntarla da zero.
+Unfortunately, the main NFT marketplaces have removed their support for testnet blockchains, so we opted to implement it from scratch.
 
 \subsection{Design of Auction}
 
@@ -373,49 +351,167 @@ abbiamo optato ad implemntarla da zero.
 \label{uml:auction}
 \end{figure}
 
-L'obbiettivo dell'asta di cui abbiamo fatto il design è quello di crare uno smart contract
-riutilizzabile con qualsiasi tipo di token e con qualsiasi tipo di
-collezione NFT.
+The goal of the auction we designed is to create a smart contract that is reusable with any type of token and any NFT collection.
 
-Ecco la descrizione dei metodi dell'asta:
+Here is a description of the auction methods:
 
 \begin{enumerate}
-    \item \textbf{Winner()}:
-    Ritorna l'address che ha piazzato il bid più alto al momento della chiamata del metodo. l'address è lo zero
-    se ancora nessun bid è stato piazzato.
+\item \textbf{Winner()}:
+Returns the address that has placed the highest bid at the moment the method is called. The address is zero if no bids have been placed yet.
 
-    \item \textbf{topBid()}:  
-    Ritorna l'address che ha piazzato il bid più alto insieme al valore del bid piazzato al momento della chiamata del metodo. l'address e il valore del bid è lo zero
-    se ancora nessun bid è stato piazzato.
+\item \textbf{topBid()}:  
+Returns the address that has placed the highest bid along with the bid amount at the moment the method is called. Both the address and the bid value are zero if no bids have been placed yet.
 
-    \item \textbf{placeBid(uint256 value)}:
-    Permette di piazzare un bid nell'asta. Per esegure questo metodo bisogna prima approvare al auction
-    di poter trasferire i propri token. Quando si esegue placebid l'auction prende i token specificati nel campo \texttt{value}
-    e li trasferisce a se stesso. Si consiglia di approvare all'auction di poter trasferire un numero infinito di token, così ad ogni piazzamento del bid
-    non bisogna fare 2 transazioni. Se il bid è già stato piazzato allora viene sommato il valore.
+\item \textbf{placeBid(uint256 value)}:  
+Allows placing a bid in the auction. To execute this method, the auction must first be approved to transfer your tokens. When \texttt{placeBid} is executed, the auction takes the tokens specified in the \texttt{value} field and transfers them to itself. It is recommended to approve the auction to transfer an unlimited number of tokens so that each bid placement does not require two transactions. If a bid has already been placed, the value is added to the existing bid.
 
-    \item \textbf{endAuction()}:
-    Permette (solo al creatore dell'auction) di chiudere l'asta.
-    Una volta chiusa l'asta non è possibile più piazzare dei bid per essa.
-    Chi ha vinto l'asta riceverà NFT (prima di chiamare questo metodo il creatore dell'asta deve approvare lo scambio del token)
-    e il creatore riceverà i token. Tutti gli altri bidder verranno rimborsati.
+\item \textbf{endAuction()}:  
+Allows only the creator of the auction to close it. Once the auction is closed, no further bids can be placed. The winner receives the NFT (before calling this method, the auction creator must approve the token transfer), and the creator receives the tokens. All other bidders are refunded.
 \end{enumerate}
 
 \subsection{Events}
 
-Gli eventi sono trasmessi ad ogni cambiamento di stato dello smart contract come mostrato in figura \ref{uml:auction}.
+Events are emitted for every change in the smart contract's state, as shown in Figure \ref{uml:auction}.
 
-In particolare gli eventi sono:
+Specifically, the events are:
 
 \begin{enumerate}
-    \item \textbf{Bid(uint256 value, address indexed creator)}:  
-    Viene emesso ad ogni bid effettuato.
-    \item \textbf{endedAuction(address indexed winner)}:  
-    Viene emesso quando viene chiusa l'asta
+\item \textbf{Bid(uint256 value, address indexed creator)}:
+Emitted every time a bid is placed.
+\item \textbf{endedAuction(address indexed winner)}:  
+Emitted when the auction is closed.  
 \end{enumerate}
+
+\section{Implementation Details}
+
+% TODO: introduzione agli ambienti di sviluppo solidity
+
+Solidity, a differenza dei linguaggi di programmazione tradizionali, 
+introducono vincoli aggiuntivi legati al gas, alla sicurezza e alla gestione delle transazioni.
+
+Diffatti è possibile utilizzare questi tool per comunicare direttamente con la blockchain, ergo effettuare transazioni,
+fare il deploy di smart contract e pubblicare il codice sorgente dei contratti su servizi come etherscan.
+
+Un'altro vincolo importante che aggiunge solidity è che una volta fatto il deploy sulla blockchain
+non è possibile modificarlo, dato che pubblicare smart contract può avere importanti costi di deploy è fondamentale
+essere sicuri della corretteza del codice. Quindi il testing è fondamentale, oppure la verifica formale
+del codice, ovvero che i requisiti (visti come invarianti del sistema) siano soddisfatti.
+
+Per verificare la corretteza del codice è possibile usare la logica (Firts Order Logic, Hoer Logic) per dimostrare formalmente
+proprietà nel nostro codice. Oppure fare fuzzing testing, ergo definire le invarianti e poi chiamare i vari metodi di uno smart contract
+con input a caso fino a quando le invarianti non vengono confutate.
+
+Esistono molti ambienti di sviluppo per solidity. Noi abbiamo implementato gli smart contract presentati in questo progetto
+con Foundry, ma uno dei più famosi è OpenZeppelin.
+
+
+\subsection{OpenZeppelin}
+
+% TODO: spiega al volo cos'è openzeppelin e come creare token e NFT su openzeppelin ad alto livello
+
+OpenZeppelin è uno dei framework più famosi per lavorare su soldity.
+
+Per creare Token ERC-20 o ERC-721 esistono dei costrutti per poterli implementare con pochissime righe di codice.
+
+Se il Token richiede altra logica (per esempio per creare un Wrapped Coin) è possibile aggiungere metodi oltre ai costrutti già definiti.
+
+\begin{figure}
+\centering
+\begin{lstlisting}[style=soliditystyle]
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+contract SapiCoin is ERC20 {
+    constructor(uint256 initialSupply) ERC20("SapiCoin", "SAC") {
+        _mint(msg.sender, initialSupply);
+    }
+}
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+
+contract NFTCollection is ERC721URIStorage {
+    constructor() ERC721("ClimbingOnTrees", "COT") { }
+}
+\end{lstlisting}
+\caption{Implementation of ERC-20 and ERC-721} 
+\label{code:openzeppelin}
+\end{figure}
+
+In figura \ref{code:openzeppelin} è possibile vedere l'implementazione dei smart contract per implementare ERC-20 e ERC-721.
+
+Tuttavia non abbiamo scelto questo tool per creare i nostri smart contract poiché
+OpenZeppelin è basato su JavaScript rendendo difficile lavorare con le dipendenze che introduce NodeJS.
+
+\subsection{Foudry}
+
+Foundry introduce un intero ecosistema per lavorare sulle blockchain EVM compatibili.
+
+Foundry è composto da 3 elementi:
+
+\begin{enumerate}
+  \item \texttt{forge} permette di compilare, testare, debuggare, deployare e verificare smart contracts.
+  \item \texttt{anvil} permette di istanziare un nodo di sviluppo della blockchain, facendo una fork della mainnet.
+  \item \texttt{cast} is a swiss army knife for interacting with onchain applications from the command line. 
+\end{enumerate}
+
+
+
+\subsection{Verifica dei requisiti}
 
 \section{Liquidity Pool}
 
+As the creators of the SapiCoin token, we initially hold the entire token supply. Consequently, without additional mechanisms, the only way to distribute SapiCoin to users would be to send them manually to those who request them. This approach is not scalable and does not allow users to obtain tokens autonomously.
 
+To automate distribution and, more importantly, to create a real market between SapiCoin and Ether, we introduced an Automated Market Maker (AMM). AMMs are protocols that allow users to swap tokens without the need for a direct counterparty.
+
+For this project, we used Uniswap v3 \cite{uniswapv3core2021} , one of the most advanced and efficient AMMs. Uniswap v3 allows the creation of liquidity pools between SapiCoin and Ether. By depositing an initial amount of both tokens, an initial market price for SapiCoin is established. From that point onward, anyone can buy or sell SapiCoin against Ether, and the protocol automatically updates the price based on the AMM formula and the available liquidity.
+
+In fiat currencies, central banks (e.g., the European Central Bank) determine the exchange rate. In DeFi currencies, this is not possible because we operate in a distributed system.
+
+Uniswap v3 uses the Constant Product Formula to determine the exchange rate:
+
+\begin{equation}
+x \cdot y = k
+\end{equation}
+
+Here, $x$ and $y$ are the amounts of the two tokens available for swapping, and $k$ is the invariant of the system. We can freely change the values of $x$ and $y$ as long as $k$ remains constant.
+
+Therefore, the exchange rate of token $x$ in exchange for $y$ is $\frac{x}{y}$.
+
+Those who provide liquidity are called investors, creating positions in the liquidity pool. Investors provide liquidity to earn a return. This return comes from fees. Depending on the amount of liquidity contributed to the pool, each investor receives a percentage of the fees collected.
+
+The liquidity within a liquidity pool is calculated as:
+
+\begin{equation}
+L = \sqrt{k} = \sqrt{x \cdot y}
+\end{equation}
+
+For each investor, the amount of liquidity invested in their positions is recorded. When an investor contributes, their position is represented by an NFT.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.3\textwidth]{liquidty_position.png}}
+\caption{NFT of a liquidity position in Uniswap v3.}
+\label{img:liq}
+\end{figure}
+
+This allows investors to sell or trade their liquidity positions.
+\section{Conclusion}
+
+We have designed and implemented a complete suite of smart contracts that interact through well-established Ethereum standards.
+The Token contract follows the ERC-20 specification and provides a fungible currency (SapiCoin) used as the medium of exchange within the system.
+The NFT contract adheres to the ERC-721 standard and defines unique assets that can be auctioned.
+Finally, the Auction and Liquidity Pool contracts coordinate token transfers, NFT ownership changes, and Ether–SapiCoin conversion.
+
+The architecture demonstrates how interoperability on Ethereum naturally emerges from interface-based design and the polymorphic behavior of the EVM.
+Each component is independent yet composable, enabling reuse, modular upgrades, and clear separation of concerns.
+The Liquidity Pool offers an automated mechanism to acquire SapiCoin, removing the need for manual token distribution, while the Auction contract provides a programmable marketplace for NFTs.
+
+Overall, the system shows how standardized interfaces (ERC-20, ERC-165, ERC-721) combined with custom logic make it possible to build decentralized applications where multiple contracts cooperate reliably without central authority.
+
+\bibliography{bibliography}
 
 \end{document}

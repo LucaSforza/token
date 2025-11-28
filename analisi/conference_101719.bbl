@@ -1,0 +1,30 @@
+\begin{thebibliography}{1}
+
+\bibitem{uniswapv3core2021}
+Hayden Adams, Noah Zinsmeister, Moody Salem, River Keefer, and Dan Robinson.
+\newblock Uniswap v3 core, March 2021.
+\newblock Whitepaper / Technical Report.
+
+\bibitem{erc721}
+William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs.
+\newblock Erc‑721: Non‑fungible token standard.
+\newblock Ethereum Improvement Proposal, January 2018.
+\newblock Standard interface for non‑fungible tokens on Ethereum.
+
+\bibitem{jurgelaitis2022}
+Mantas Jurgelaitis, Lina Čeponienė, and Rita Butkienė.
+\newblock Solidity code generation from uml state machines in model-driven smart contract development.
+\newblock {\em Department of Information Systems, Faculty of Informatics, Kaunas University of Technology}, 2022.
+
+\bibitem{ethereum-magicians}
+Fellowship of~Ethereum~Magicians.
+\newblock Fellowship of ethereum magicians, s.d.
+\newblock Accessed: 2025-11-19.
+
+\bibitem{erc20}
+Fabian Vogelsteller and Vitalik Buterin.
+\newblock Erc-20: Token standard.
+\newblock Ethereum Improvement Proposal, November 2015.
+\newblock Standard interface for fungible tokens on Ethereum.
+
+\end{thebibliography}

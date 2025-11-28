@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: conference_101719.aux
+The style file: plain.bst
+Database file #1: bibliography.bib
+Warning--entry type for "ethereum-magicians" isn't style-file defined
+--line 40 of file bibliography.bib
+You've used 5 entries,
+            2118 wiz_defined-function locations,
+            525 strings with 4847 characters,
+and the built_in function-call counts, 1406 in all, are:
+= -- 126
+> -- 89
+< -- 0
++ -- 35
+- -- 30
+* -- 83
+:= -- 250
+add.period$ -- 17
+call.type$ -- 5
+change.case$ -- 30
+chr.to.int$ -- 0
+cite$ -- 5
+duplicate$ -- 38
+empty$ -- 106
+format.name$ -- 30
+if$ -- 286
+int.to.chr$ -- 0
+int.to.str$ -- 5
+missing$ -- 1
+newline$ -- 30
+num.names$ -- 10
+pop$ -- 48
+preamble$ -- 1
+purify$ -- 25
+quote$ -- 0
+skip$ -- 34
+stack$ -- 0
+substring$ -- 25
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 20
+warning$ -- 0
+while$ -- 10
+width$ -- 6
+write$ -- 56
+(There was 1 warning)
