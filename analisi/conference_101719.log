@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.17)  28 NOV 2025 16:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.17)  29 NOV 2025 16:35
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -305,17 +305,17 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 90.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 156.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 160.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 <token.png, id=1, 583.17876pt x 469.755pt>
 File: token.png Graphic file (type png)
 <use token.png>
-Package pdftex.def Info: token.png  used on input line 167.
+Package pdftex.def Info: token.png  used on input line 171.
 (pdftex.def)             Requested size: 180.60315pt x 145.47202pt.
 
-Underfull \hbox (badness 2165) in paragraph at lines 180--182
+Underfull \hbox (badness 2165) in paragraph at lines 183--185
 []\OT1/ptm/b/n/10 transferFrom(address from, ad-dress to, uint256
  []
 
@@ -323,64 +323,58 @@ Underfull \hbox (badness 2165) in paragraph at lines 180--182
 
 
 ]
-Underfull \hbox (badness 2556) in paragraph at lines 195--196
+Underfull \hbox (badness 2556) in paragraph at lines 198--199
 []\OT1/ptm/m/n/10 Figure 2[] de-scribes the var-i-ous events emit-ted asyn-
  []
 
 <nft.png, id=13, 758.835pt x 432.61626pt>
 File: nft.png Graphic file (type png)
 <use nft.png>
-Package pdftex.def Info: nft.png  used on input line 230.
+Package pdftex.def Info: nft.png  used on input line 233.
 (pdftex.def)             Requested size: 258.0pt x 147.08757pt.
 
-LaTeX Warning: Reference `' on page 2 undefined on input line 247.
-
-
-LaTeX Warning: Reference `' on page 2 undefined on input line 251.
-
-
-Underfull \hbox (badness 1371) in paragraph at lines 260--262
+Underfull \hbox (badness 1371) in paragraph at lines 287--289
 []\OT1/ptm/b/n/10 balanceOf(address owner)\OT1/ptm/m/n/10 : re-turns the num-ber of
  []
 
 [2 <./token.png> <./nft.png>]
-Underfull \hbox (badness 3536) in paragraph at lines 289--292
+Underfull \hbox (badness 3536) in paragraph at lines 316--319
 \OT1/ptm/m/n/10 al-lows a user to en-able or dis-able an op-er-a-tor
  []
 
 
-Underfull \hbox (badness 4341) in paragraph at lines 289--292
+Underfull \hbox (badness 4341) in paragraph at lines 316--319
 \OT1/ptm/m/n/10 that can man-age all of their NFTs. Emits the
  []
 
 <image_nft.png, id=23, 1927.2pt x 1712.3975pt>
 File: image_nft.png Graphic file (type png)
 <use image_nft.png>
-Package pdftex.def Info: image_nft.png  used on input line 335.
+Package pdftex.def Info: image_nft.png  used on input line 362.
 (pdftex.def)             Requested size: 154.80157pt x 137.5433pt.
-[3 <./image_nft.png>]
-<auction.png, id=28, 660.4675pt x 688.5725pt>
+[3]
+<auction.png, id=27, 660.4675pt x 688.5725pt>
 File: auction.png Graphic file (type png)
 <use auction.png>
-Package pdftex.def Info: auction.png  used on input line 355.
+Package pdftex.def Info: auction.png  used on input line 382.
 (pdftex.def)             Requested size: 258.0pt x 268.98347pt.
- [4 <./auction.png>]
+ [4 <./image_nft.png> <./auction.png>]
 <liquidty_position.png, id=33, 399.4925pt x 458.71375pt>
 File: liquidty_position.png Graphic file (type png)
 <use liquidty_position.png>
-Package pdftex.def Info: liquidty_position.png  used on input line 462.
+Package pdftex.def Info: liquidty_position.png  used on input line 489.
 (pdftex.def)             Requested size: 154.80157pt x 177.74974pt.
 
-Underfull \hbox (badness 1721) in paragraph at lines 470--474
+Underfull \hbox (badness 1721) in paragraph at lines 497--501
 \OT1/ptm/m/n/10 of smart con-tracts that in-ter-act through well-established
  []
 
 
-Underfull \hbox (badness 1990) in paragraph at lines 475--478
+Underfull \hbox (badness 1990) in paragraph at lines 502--505
 []\OT1/ptm/m/n/10 The ar-chi-tec-ture demon-strates how in-ter-op-er-abil-ity on
  []
 
-(./conference_101719.bbl)
+(./conference_101719.bbl [5 <./liquidty_position.png>])
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -392,29 +386,27 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[5 <./liquidty_position.png>] (./conference_101719.aux)
+[6
+
+] (./conference_101719.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-03-14>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
  ) 
 Here is how much of TeX's memory you used:
- 6000 strings out of 474104
- 90177 string characters out of 5743467
- 1964493 words of memory out of 5000000
- 28317 multiletter control sequences out of 15000+600000
+ 6010 strings out of 474104
+ 90334 string characters out of 5743467
+ 2061493 words of memory out of 5000000
+ 28327 multiletter control sequences out of 15000+600000
  598818 words of font info for 116 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  57i,11n,65p,568b,1338s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on conference_101719.pdf (5 pages, 451069 bytes).
+Output written on conference_101719.pdf (6 pages, 452554 bytes).
 PDF statistics:
- 87 PDF objects out of 1000 (max. 8388607)
- 47 compressed objects within 1 object stream
+ 90 PDF objects out of 1000 (max. 8388607)
+ 49 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

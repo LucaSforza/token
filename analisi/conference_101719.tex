@@ -144,12 +144,16 @@ If we want to implement a contract that manages an NFT auction, it will call the
 
 \subsection{Design of the standard ERC-20}
 
-A smart contract can be viewed as a class. \cite{jurgelaitis2022}
+A smart contract can be seen as a class in other programming languages, and can therefore be represented as a UML class.
 
-Programming languages such as Solidity allow us to express the idea of an interface.
-This means we can constrain a smart contract to include the methods required by a standard by inheriting the abstract methods of an interface, as shown in Fig. \ref{code:erc20}.
+For the development of blockchain smart contracts, a structured approach based on the principles of the Model Driven Architecture can be beneﬁcial and facilitate the implementation of smart contracts.
+In combination with Uniﬁed Modeling Language (UML)
+Class and State machine diagrams, allows the smart contract structure and behavior logic to be modeled in
+several abstraction layers.\cite{jurgelaitis2022}
 
-Of course, this is purely syntactic sugar, because the EVM itself is already polymorphic; in fact, inheritance can even be omitted.
+So we can model the ERC-20 as shown in Fig \ref{uml:token}.
+
+% INFO: dire nelle slide Of course, this is purely syntactic sugar, because the EVM itself is already polymorphic; in fact, inheritance can even be omitted.
 
 \begin{figure}
 \centering
@@ -169,7 +173,6 @@ Of course, this is purely syntactic sugar, because the EVM itself is already pol
 \label{uml:token}
 \end{figure}
 
-Figure \ref{uml:token} shows an overview of the ERC-20 standard.
 
 The ERC-20 standard requires a token to implement the following methods:
 
@@ -188,7 +191,7 @@ Users can call \texttt{approve} on a given smart contract for a specified amount
 
 In this way, a smart contract can use our tokens to provide a service.
 
-ERC-20 also defines a set of events that a token should emit whenever the contract’s internal state changes, so that the operations executed within a smart contract can be tracked and displayed by front-end applications such as Etherscan. % TODO: link etherscan
+ERC-20 also defines a set of events that a token should emit whenever the contract’s internal state changes, so that the operations executed within a smart contract can be tracked and displayed by front-end applications such as Etherscan.
 
 \subsection{Events}
 
@@ -233,7 +236,7 @@ For example, 4 SapiCoin in memory is stored as $4 \cdot 10^{18}$.
 \end{figure}
 
 
-According to the standard, every ERC-721 compliant contract must implement the ERC721 and ERC165 interfaces, as shown in Figure \ref{uml:nft}. % TODO: reference https://eips.ethereum.org/EIPS/eip-721
+According to the standard \cite{erc721} , every ERC-721 compliant contract must implement the ERC721 and ERC165 interfaces, as shown in Figure \ref{uml:nft}.
 
 \subsection{ERC-165 Standard}
 The ERC-165 standard defines a mechanism to declare and verify whether a contract implements a specific interface.
@@ -244,12 +247,36 @@ allows checking whether the contract implements the interface identified by \tex
 Returns \texttt{true} if the interface is supported, and \texttt{false} otherwise.
 
 Secondo lo standard la funzione supportsInterface deve ritornare true sse interfaceID è uguale allo xor
-della segnatura delle funzioni di cui è implementata l'interfaccia. In figura \ref{} è  %TODO: aggiungi reference anche sotto
-dato un esempio.
+della segnatura delle funzioni di cui è implementata l'interfaccia.
 
 Anche se, Solidity ci offre direttamente nella sintassi del linguaggio,
-un modo per ottenere questo valore pre-calcolato (quindi più gas efficient), vedere figura \ref{}.
+un modo per ottenere questo valore pre-calcolato (quindi più gas efficient), vedere figura \ref{code:erc165}.
 
+\begin{figure}
+\centering
+\begin{lstlisting}[style=soliditystyle, basicstyle=\ttfamily\footnotesize]
+    contract Taxpayer is IERC165, ITaxpayer {
+        
+        mapping(bytes4 => bool) internal supportedInterfaces;
+
+        constructor() {
+            supportedInterfaces[
+                type(IERC165).interfaceId
+            ] = true;
+            supportedInterfaces[
+                type(ITaxpayer).interfaceId
+            ] = true;
+        }
+        function supportsInterface(
+            bytes4 interfaceId
+        ) external view returns (bool) {
+            return supportedInterfaces[interfaceId];
+        }
+    }
+\end{lstlisting}
+\caption{The most gas efficient implementation of ERC-165}
+\label{code:erc165}
+\end{figure}
 
 \subsection{ERC-721 Standard}
 The ERC-721 interface defines the standard for NFTs.
@@ -341,7 +368,7 @@ For the purpose of this project, we created an NFT for the image in Figure \ref{
 
 There is no standard for NFT auctions, so creating one requires using other strategies.
 
-For example, one can use an auction system with contracts already deployed on the blockchain and create an auction through that system. This way, every user of the system can access your auction, for instance via OpenSea. % TODO: reference
+For example, one can use an auction system with contracts already deployed on the blockchain and create an auction through that system. This way, every user of the system can access your auction, for instance via OpenSea.
 
 Alternatively, one can manually create the auction smart contract and deploy it on the blockchain.
 
@@ -470,9 +497,9 @@ This allows investors to sell or trade their liquidity positions.
 We have designed and implemented a complete suite of smart contracts that interact through well-established Ethereum standards.
 The Token contract follows the ERC-20 specification and provides a fungible currency (SapiCoin) used as the medium of exchange within the system.
 The NFT contract adheres to the ERC-721 standard and defines unique assets that can be auctioned.
-Finally, the Auction and Liquidity Pool contracts coordinate token transfers, NFT ownership changes, and Ether–SapiCoin conversion.
+Finally, the Auction and Liquidity Pool contracts coordinate token transfers, NFT ownership changes, and Ether-SapiCoin conversion.
 
-The architecture demonstrates how interoperability on Ethereum naturally emerges from interface-based design and the polymorphic behavior of the EVM.
+The architecture demonstrates how interoperability on Ethereum naturally emerges from UML-style interface-based design and the polymorphic behavior of the EVM.
 Each component is independent yet composable, enabling reuse, modular upgrades, and clear separation of concerns.
 The Liquidity Pool offers an automated mechanism to acquire SapiCoin, removing the need for manual token distribution, while the Auction contract provides a programmable marketplace for NFTs.
 
