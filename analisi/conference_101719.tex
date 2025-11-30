@@ -68,6 +68,18 @@
   tabsize=2
 }
 
+\lstset{
+  language=bash,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{green!60!black},
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  breaklines=true,
+  showstringspaces=false
+}
+
 \begin{document}
 
 % Designing and Developing a Token-Driven NFT Marketplace on Ethereum
@@ -451,9 +463,47 @@ Foundry è composto da 3 utility:
   \item \texttt{cast} is a swiss army knife for interacting with onchain applications from the command line. 
 \end{enumerate}
 
-% TODO: dire come fare il deploy di uno smart contract
+\texttt{forge} è la princiale utility che si usa quando si programma in Solidity.
 
-% TODO: dire come interagire con lo smart contract onchain
+forge permette di inizializzare un nuovo progetto (visto come una cartella), all'interno di essa
+nella cartella \texttt{src} si inseriscono gli smart contract che vogliamo implementare.
+
+Una volta scritto il codice è possibile pubblicare lo smart contract nel seguente modo:
+
+\begin{lstlisting}[language=bash]
+$ forge create src/sapicoin.sol:SapiCoin  --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
+        --private-key $(cat path/to/pk.txt)
+        --broadcast --constructor-args $@ # gli argomenti da passare al costruttore
+\end{lstlisting}
+
+Fornendo la chiave privata, forge può firmare transazioni sulla blockchain selezionata tramite l’endpoint RPC, cioè l’interfaccia che permette agli strumenti esterni di comunicare con un nodo della rete (invio di transazioni, lettura dello stato, interrogazione dei blocchi).
+
+L'output del comando è l'address dello smart contract.
+
+Invece per poter interagire con lo smart contract i modi principali sono 2:
+\begin{enumerate}
+    \item Programmaticamente facendo il binding dei metodi Solidity in Rust (o in javascript in altri ambienti di sviluppo).
+    \item Verificare l'ownership del contratto in siti esterni (come etherscan) e poter interagirci direttamente dal browser collegando un wallet.
+\end{enumerate}
+
+
+Il comando per verificare
+uno smart contract è il seguente.
+
+\begin{lstlisting}[language=bash]
+$ forge verify-contract --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
+        --etherscan-api-key $(cat path/to/api_key.txt)
+        $(echo $ADDRESS)
+        src/sapicoin.sol:SapiCoin
+\end{lstlisting}
+
+E' necessario registrarsi ad etherscan per ottenere le API key.
+
+Con questa verifica noi inviamo tutte le configurazioni del compilatore Solidity
+ad etherscan, poi lui può compilare il codice e verificare che l'output (codice binario) sia esattamente il codice dello smart contract.
+
+In questo modo chiunque sappia leggere codice Solidity può verificare che il nostro smart contract non è malevolo
+ed etherscan permetterà di interagire con esso.
 
 \section{Liquidity Pool}
 
@@ -505,7 +555,6 @@ The Liquidity Pool offers an automated mechanism to acquire SapiCoin, removing t
 
 Overall, the system shows how standardized interfaces (ERC-20, ERC-165, ERC-721) combined with custom logic make it possible to build decentralized applications where multiple contracts cooperate reliably without central authority.
 
-% TODO: fare esempi di applicazioni onchain
 
 \bibliography{bibliography}
 
