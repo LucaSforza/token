@@ -258,11 +258,9 @@ In other words, it allows other contracts to query a contract and determine if i
 allows checking whether the contract implements the interface identified by \texttt{interfaceID}.
 Returns \texttt{true} if the interface is supported, and \texttt{false} otherwise.
 
-Secondo lo standard la funzione supportsInterface deve ritornare true sse interfaceID è uguale allo xor
-della segnatura delle funzioni di cui è implementata l'interfaccia.
+According to the standard, the supportsInterface function must return true if and only if the provided interfaceID matches the XOR of the function selectors that define the interface.
 
-Anche se, Solidity ci offre direttamente nella sintassi del linguaggio,
-un modo per ottenere questo valore pre-calcolato (quindi più gas efficient), vedere figura \ref{code:erc165}.
+However, Solidity provides a built-in mechanism to obtain this value directly through the language syntax itself, resulting in a precomputed and therefore more gas-efficient representation (see Figure \ref{code:erc165}).
 
 \begin{figure}
 \centering
@@ -430,80 +428,68 @@ Emitted when the auction is closed.
 \section{Implementation Details}
 
 
-Solidity, a differenza dei linguaggi di programmazione tradizionali, 
-introducono vincoli aggiuntivi legati al gas, alla sicurezza e alla gestione delle transazioni.
+Solidity, unlike traditional programming languages, introduces additional constraints related to gas consumption, security, and transaction management.
 
-Diffatti è possibile utilizzare ambienti di sviluppo Solidity per comunicare direttamente con la blockchain, ergo effettuare transazioni,
-fare il deploy di smart contract e pubblicare il codice sorgente dei contratti su servizi come etherscan.
+In particular, Solidity development environments allow direct interaction with the blockchain, enabling developers to perform transactions, deploy smart contracts, and publish contract source code on services such as Etherscan.
 
-Uno dei vincoli più importante che aggiunge Solidity è che una volta fatto il deploy sulla blockchain
-non è possibile modificarlo, dato che pubblicare smart contract può avere importanti costi di deploy è fondamentale
-essere sicuri della corretteza del codice. Quindi il testing è fondamentale, oppure la verifica formale
-del codice, ovvero che i requisiti (visti come invarianti del sistema) siano soddisfatti.
+One of the most significant constraints imposed by Solidity is that, once a contract is deployed on the blockchain, it cannot be modified. Since deploying smart contracts may incur substantial costs, ensuring the correctness of the code becomes essential. Consequently, testing—or even formal verification of the code, understood as proving that the system’s invariants are satisfied—is a critical step.
 
-Per verificare la corretteza del codice è possibile usare la logica (Firts Order Logic, Hoer Logic) per dimostrare formalmente
-proprietà nel nostro codice. Oppure fare fuzzing testing, ergo definire le invarianti e poi chiamare i vari metodi di uno smart contract
-con input a caso fino a quando le invarianti non vengono confutate.
+To verify correctness, one may employ logic-based approaches (First-Order Logic, Hoare Logic) to formally prove properties of the code. Alternatively, fuzz testing can be used: developers define the invariants and repeatedly invoke contract methods with random inputs until a violation of those invariants is detected.
 
 \subsubsection{State of Art}
 
-Esistono molti ambienti di sviluppo per Solidity. Noi abbiamo scelto Foundry.
-Un altro molto famoso è OpenZeppelin.
+There are many development environments for Solidity. We chose Foundry. Another widely used option is OpenZeppelin.
 
 
-\subsection{Foudry}
+\subsection{Foundry}
 
-Foundry introduce un intero ecosistema per lavorare sulle blockchain EVM compatibili.
+Foundry provides a complete ecosystem for working with EVM-compatible blockchains.
 
-Foundry è composto da 3 utility:
+It consists of three main utilities:
 
 \begin{enumerate}
-  \item \texttt{forge} permette di compilare, testare, debuggare, deployare e verificare smart contracts.
-  \item \texttt{anvil} permette di istanziare un nodo di sviluppo locale della blockchain scelta, facendone una fork.
-  \item \texttt{cast} is a swiss army knife for interacting with onchain applications from the command line. 
+\item \texttt{forge}, which enables compilation, testing, debugging, deployment, and verification of smart contracts.
+\item \texttt{anvil}, which allows the instantiation of a local development node by forking the selected blockchain.
+\item \texttt{cast}, a versatile command-line tool for interacting with on-chain applications.
 \end{enumerate}
 
-\texttt{forge} è la princiale utility che si usa quando si programma in Solidity.
+\texttt{forge} is the primary tool used when developing in Solidity.
 
-forge permette di inizializzare un nuovo progetto (visto come una cartella), all'interno di essa
-nella cartella \texttt{src} si inseriscono gli smart contract che vogliamo implementare.
+forge initializes a new project (structured as a directory), where smart contracts are placed in the \texttt{src} folder.
 
-Una volta scritto il codice è possibile pubblicare lo smart contract nel seguente modo:
+Once the code is written, the smart contract can be deployed as follows:
 
 \begin{lstlisting}[language=bash]
-$ forge create src/sapicoin.sol:SapiCoin  --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
-        --private-key $(cat path/to/pk.txt)
-        --broadcast --constructor-args $@ # gli argomenti da passare al costruttore
+$ forge create src/sapicoin.sol:SapiCoin  -rpc-url https://ethereum-sepolia-rpc.publicnode.com 
+-private-key $(cat path/to/pk.txt)
+-broadcast -constructor-args $@ # constructor arguments
 \end{lstlisting}
 
-Fornendo la chiave privata, forge può firmare transazioni sulla blockchain selezionata tramite l’endpoint RPC, cioè l’interfaccia che permette agli strumenti esterni di comunicare con un nodo della rete (invio di transazioni, lettura dello stato, interrogazione dei blocchi).
+By providing the private key, forge can sign transactions on the selected blockchain through the RPC endpoint, which serves as the interface enabling external tools to communicate with a network node (sending transactions, reading state, querying blocks).
 
-L'output del comando è l'address dello smart contract. 
+The output of this command is the address of the deployed smart contract.
 
-Invece per poter interagire con lo smart contract i modi principali sono 2:
+There are two main approaches for interacting with a deployed smart contract:
+
 \begin{enumerate}
-    \item Programmaticamente facendo il binding dei metodi Solidity in Rust (o in javascript in altri ambienti di sviluppo).
-    \item Verificare l'ownership del contratto in siti esterni (come etherscan) e poter interagirci direttamente dal browser collegando un wallet.
+\item Programmatically, by binding Solidity methods in Rust (or in JavaScript in other development environments).
+\item By verifying contract ownership on external platforms (such as Etherscan) and interacting directly from a web browser via a connected wallet.
 \end{enumerate}
 
-
-Il comando per verificare
-uno smart contract è il seguente.
+The command for verifying a smart contract is:
 
 \begin{lstlisting}[language=bash]
-$ forge verify-contract --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
-        --etherscan-api-key $(cat path/to/api_key.txt)
-        $(echo $ADDRESS)
-        src/sapicoin.sol:SapiCoin
+$ forge verify-contract -rpc-url https://ethereum-sepolia-rpc.publicnode.com 
+-etherscan-api-key $(cat path/to/api_key.txt)
+$(echo $ADDRESS)
+src/sapicoin.sol:SapiCoin
 \end{lstlisting}
 
-E' necessario registrarsi ad etherscan per ottenere le API key.
+Registration on Etherscan is required to obtain an API key.
 
-Con questa verifica noi inviamo tutte le configurazioni del compilatore Solidity
-ad etherscan, poi lui può compilare il codice e verificare che l'output (codice binario) sia esattamente il codice dello smart contract.
+Verification sends the Solidity compiler configuration to Etherscan, which then recompiles the code and checks that the resulting bytecode matches the on-chain contract.
 
-In questo modo chiunque sappia leggere codice Solidity può verificare che il nostro smart contract non è malevolo
-ed etherscan permetterà di interagire con esso.
+This process allows anyone familiar with Solidity to confirm that the contract is not malicious, and Etherscan subsequently enables public interaction with it.
 
 \section{Liquidity Pool}
 

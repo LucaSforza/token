@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.17)  30 NOV 2025 19:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.17)  1 DEC 2025 12:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -336,51 +336,51 @@ File: nft.png Graphic file (type png)
 <use nft.png>
 Package pdftex.def Info: nft.png  used on input line 245.
 (pdftex.def)             Requested size: 258.0pt x 147.08757pt.
-
-Underfull \hbox (badness 1371) in paragraph at lines 299--301
+[2 <./token.png> <./nft.png>]
+Underfull \hbox (badness 1371) in paragraph at lines 297--299
 []\OT1/ptm/b/n/10 balanceOf(address owner)\OT1/ptm/m/n/10 : re-turns the num-ber of
  []
 
-[2 <./token.png> <./nft.png>]
-Underfull \hbox (badness 3536) in paragraph at lines 328--331
+
+Underfull \hbox (badness 3536) in paragraph at lines 326--329
 \OT1/ptm/m/n/10 al-lows a user to en-able or dis-able an op-er-a-tor
  []
 
 
-Underfull \hbox (badness 4341) in paragraph at lines 328--331
+Underfull \hbox (badness 4341) in paragraph at lines 326--329
 \OT1/ptm/m/n/10 that can man-age all of their NFTs. Emits the
  []
 
 <image_nft.png, id=23, 1927.2pt x 1712.3975pt>
 File: image_nft.png Graphic file (type png)
 <use image_nft.png>
-Package pdftex.def Info: image_nft.png  used on input line 374.
+Package pdftex.def Info: image_nft.png  used on input line 372.
 (pdftex.def)             Requested size: 154.80157pt x 137.5433pt.
 [3]
 <auction.png, id=27, 660.4675pt x 688.5725pt>
 File: auction.png Graphic file (type png)
 <use auction.png>
-Package pdftex.def Info: auction.png  used on input line 394.
+Package pdftex.def Info: auction.png  used on input line 392.
 (pdftex.def)             Requested size: 258.0pt x 268.98347pt.
  [4 <./image_nft.png> <./auction.png>]
-LaTeX Font Info:    Trying to load font information for TS1+pcr on input line 474.
+LaTeX Font Info:    Trying to load font information for TS1+pcr on input line 463.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/psnfss/ts1pcr.fd
 File: ts1pcr.fd 2001/06/04 font definitions for TS1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
-(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 476.
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 465.
 <liquidty_position.png, id=33, 399.4925pt x 458.71375pt>
 File: liquidty_position.png Graphic file (type png)
 <use liquidty_position.png>
-Package pdftex.def Info: liquidty_position.png  used on input line 539.
+Package pdftex.def Info: liquidty_position.png  used on input line 525.
 (pdftex.def)             Requested size: 154.80157pt x 177.74974pt.
 
-Underfull \hbox (badness 1721) in paragraph at lines 547--551
+Underfull \hbox (badness 1721) in paragraph at lines 533--537
 \OT1/ptm/m/n/10 of smart con-tracts that in-ter-act through well-established
  []
 
 [5]
-Underfull \hbox (badness 1990) in paragraph at lines 552--555
+Underfull \hbox (badness 1990) in paragraph at lines 538--541
 []\OT1/ptm/m/n/10 The ar-chi-tec-ture demon-strates how in-ter-op-er-abil-ity on
  []
 
@@ -405,15 +405,15 @@ L3 programming layer <2024-03-14>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 6158 strings out of 474104
- 92212 string characters out of 5743467
+ 6154 strings out of 474104
+ 92180 string characters out of 5743467
  2061493 words of memory out of 5000000
- 28461 multiletter control sequences out of 15000+600000
+ 28457 multiletter control sequences out of 15000+600000
  600758 words of font info for 123 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  57i,11n,65p,568b,1409s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on conference_101719.pdf (6 pages, 470430 bytes).
+Output written on conference_101719.pdf (6 pages, 469286 bytes).
 PDF statistics:
  100 PDF objects out of 1000 (max. 8388607)
  55 compressed objects within 1 object stream
