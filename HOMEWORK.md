@@ -16,12 +16,19 @@ To verify that everything works correctly, compile the Solidity code with:
 $ forge build
 ```
 
-To deploy a smart contract, run:
+Before deploying the smart contract you need to have some ether. We used 2 faucet:
+
+- polygon:  [https://faucet.polygon.technology/](https://faucet.polygon.technology/)
+- mining: [https://sepolia-faucet.pk910.de/](https://sepolia-faucet.pk910.de/)
+
+Then you can modify the vanities of the Token by changing the code in the contructor: [src/sapicoin.sol](src/sapicoin.sol).
+
+Then you can deploy a smart contract:
 
 ```bash
 $ forge create src/sapicoin.sol:SapiCoin  -rpc-url https://ethereum-sepolia-rpc.publicnode.com \
     -private-key $(cat path/to/pk.txt) \
-    -broadcast -constructor-args $@ # constructor arguments
+    -broadcast -constructor-args $@ # constructor arguments, the total amount of tokens
 ```
 
 To obtain the private key, you can create a wallet with [MetaMask](https://metamask.io/) and retrieve it directly from the application.
@@ -35,7 +42,7 @@ To interact with the contract on the test blockchain, you must verify the contra
 ```bash
 $ forge verify-contract -rpc-url https://ethereum-sepolia-rpc.publicnode.com 
     -etherscan-api-key $(cat path/to/api_key.txt)
-    $(echo $ADDRESS)
+    $(echo $ADDRESS) # contract address
     src/sapicoin.sol:SapiCoin
 ```
 
